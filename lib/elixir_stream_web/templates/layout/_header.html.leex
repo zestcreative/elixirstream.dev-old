@@ -1,0 +1,20 @@
+<%# _header.html.l eex template %>
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="description" content="Community of Elixir enthusiasts sharing tips, articles, and news. Made with ❤ with Elixir">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="canonical" href="https://elixirstream.dev<%= Phoenix.Controller.current_path(@conn) %>" />
+  <%= csrf_meta_tag() %>
+  <%= live_title_tag assigns[:page_title] || "Home", suffix: " · ElixirStream" %>
+  <link phx-track-static rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
+  <script defer phx-track-static type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
+
+  <script>
+    if (localStorage.theme === "dark" || (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+      document.documentElement.classList.add("dark")
+    } else {
+      document.documentElement.classList.remove("dark")
+    }
+  </script>
+</head>
