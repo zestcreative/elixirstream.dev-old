@@ -79,7 +79,7 @@
         </span>
 
         <!-- Desktop Profile -->
-        <div class="relative inline-block text-left">
+        <div @click.away="profileOpen = false" class="relative inline-block text-left">
           <%= if @current_user do %>
             <button @click="profileOpen = !profileOpen" type="button" class="bg-white rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600" id="menu-1" aria-expanded="false" aria-haspopup="true">
               <span class="sr-only">Open user menu</span>
@@ -105,16 +105,21 @@
               x-transition:leave="transition ease-in duration-75"
               x-transition:leave-start="transform opacity-100 scale-100"
               x-transition:leave-end="transform opacity-0 scale-95"
-                                                                                                                                                                                                                  class="origin-top-right absolute z-30 right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
-                                                                                                                                                                                                                  role="menu"
-                                                                                                                                                                                                                  aria-orientation="vertical"
-                                                                                                                                                                                                                  aria-labelledby="menu-1">
+              class="divide-gray-200 divide-y origin-top-right absolute z-30 right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+              role="menu"
+              aria-orientation="vertical"
+              aria-labelledby="menu-1">
               <div class="py-1">
                 <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100" role="menuitem">
                   Your Profile
                 </a>
                 <%= link "Sign Out", to: Routes.auth_path(@conn, :delete), class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100", role: "menuitem" %>
               </div>
+              <%= if admin?(@current_user) do %>
+                <div class="py-1">
+                  <%= link "Dashboard", to: Routes.live_dashboard_path(@conn, :home), class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100", role: "menuitem" %>
+                </div>
+              <% end %>
             </div>
           <% else %>
             <%= link "Sign in with GitHub", to: Routes.auth_path(@conn, :request, "github") %>
@@ -129,6 +134,7 @@
     <div
       x-show="mobileNav"
       x-cloak
+      @click="mobileNav = false"
       x-transition:enter="transition-opacity ease-linear duration-300"
       x-transition:enter-start="opacity-0"
       x-transition:enter-end="opacity-100"
@@ -212,7 +218,11 @@
             <a href="#" class="block rounded-md py-2 px-3 text-base font-medium text-gray-900 hover:bg-gray-50">Your Profile</a>
 
             <%= link "Sign out", to: Routes.auth_path(@conn, :delete), class: "block rounded-md py-2 px-3 text-base font-medium text-gray-900 hover:bg-gray-50" %>
+            <%= if admin?(@current_user) do %>
+              <%= link "Dashboard", to: Routes.live_dashboard_path(@conn, :home), class: "block rounded-md py-2 px-3 text-base font-medium text-gray-900 hover:bg-gray-50" %>
+            <% end %>
           </div>
+
         </div>
       <% end %>
     </nav>

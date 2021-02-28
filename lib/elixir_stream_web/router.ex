@@ -34,7 +34,7 @@ defmodule ElixirStreamWeb.Router do
     delete "/logout", AuthController, :delete
   end
 
-  scope "/admin" do
+  scope "/admin", as: :admin do
     pipe_through [:browser, :require_admin]
     live_dashboard "/dashboard", metrics: ElixirStreamWeb.Telemetry
   end
