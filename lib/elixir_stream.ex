@@ -1,6 +1,6 @@
-defmodule Petal do
+defmodule ElixirStream do
   @moduledoc """
-  Petal keeps the contexts that define your domain
+  ElixirStream keeps the contexts that define your domain
   and business logic.
 
   Contexts are also responsible for managing your data, regardless

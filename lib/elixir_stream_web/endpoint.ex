@@ -1,16 +1,16 @@
-defmodule PetalWeb.Endpoint do
-  use Phoenix.Endpoint, otp_app: :petal
+defmodule ElixirStreamWeb.Endpoint do
+  use Phoenix.Endpoint, otp_app: :elixir_stream
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
   @session_options [
     store: :cookie,
-    key: "_petal_key",
+    key: "_elixir_stream_key",
     signing_salt: "2IPjNPgv"
   ]
 
-  socket "/socket", PetalWeb.UserSocket,
+  socket "/socket", ElixirStreamWeb.UserSocket,
     websocket: true,
     longpoll: false
 
@@ -22,7 +22,7 @@ defmodule PetalWeb.Endpoint do
   # when deploying your static files in production.
   plug Plug.Static,
     at: "/",
-    from: :petal,
+    from: :elixir_stream,
     gzip: false,
     only: ~w(css fonts images js favicon.ico robots.txt)
 
@@ -32,7 +32,7 @@ defmodule PetalWeb.Endpoint do
     socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
     plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
-    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :petal
+    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :elixir_stream
   end
 
   plug Phoenix.LiveDashboard.RequestLogger,
@@ -50,5 +50,5 @@ defmodule PetalWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
-  plug PetalWeb.Router
+  plug ElixirStreamWeb.Router
 end

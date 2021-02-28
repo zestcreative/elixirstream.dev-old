@@ -1,9 +1,9 @@
-defmodule Petal.MixProject do
+defmodule ElixirStream.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :petal,
+      app: :elixir_stream,
       version: "0.1.0",
       elixir: "~> 1.9",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -19,7 +19,7 @@ defmodule Petal.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Petal.Application, []},
+      mod: {ElixirStream.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end

@@ -1,5 +1,5 @@
-defmodule PetalWeb.ErrorView do
-  use PetalWeb, :view
+defmodule ElixirStreamWeb.ErrorView do
+  use ElixirStreamWeb, :view
 
   # If you want to customize a particular status code
   # for a certain format, you may uncomment below.

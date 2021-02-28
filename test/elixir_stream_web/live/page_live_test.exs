@@ -1,5 +1,5 @@
-defmodule PetalWeb.PageLiveTest do
-  use PetalWeb.ConnCase
+defmodule ElixirStreamWeb.PageLiveTest do
+  use ElixirStreamWeb.ConnCase
 
   import Phoenix.LiveViewTest
 

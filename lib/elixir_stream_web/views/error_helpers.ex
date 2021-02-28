@@ -1,4 +1,4 @@
-defmodule PetalWeb.ErrorHelpers do
+defmodule ElixirStreamWeb.ErrorHelpers do
   @moduledoc """
   Conveniences for translating and building error messages.
   """
@@ -11,7 +11,7 @@ defmodule PetalWeb.ErrorHelpers do
   def error_tag(form, field) do
     Enum.map(Keyword.get_values(form.errors, field), fn error ->
       content_tag(:span, translate_error(error),
-        class: "invalid-feedback",
+        class: "text-red-500 block mb-4 -mt-2",
         phx_feedback_for: input_id(form, field)
       )
     end)
@@ -39,9 +39,9 @@ defmodule PetalWeb.ErrorHelpers do
     # should be written to the errors.po file. The :count option is
     # set by Ecto and indicates we should also apply plural rules.
     if count = opts[:count] do
-      Gettext.dngettext(PetalWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(ElixirStreamWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(PetalWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(ElixirStreamWeb.Gettext, "errors", msg, opts)
     end
   end
 end

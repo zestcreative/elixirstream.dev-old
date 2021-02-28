@@ -1,4 +1,4 @@
-defmodule Petal.DataCase do
+defmodule ElixirStream.DataCase do
   @moduledoc """
   This module defines the setup for tests requiring
   access to the application's data layer.
@@ -10,7 +10,7 @@ defmodule Petal.DataCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use Petal.DataCase, async: true`, although
+  by setting `use ElixirStream.DataCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -18,20 +18,20 @@ defmodule Petal.DataCase do
 
   using do
     quote do
-      alias Petal.Repo
+      alias ElixirStream.Repo
 
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
-      import Petal.DataCase
+      import ElixirStream.DataCase
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Petal.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(ElixirStream.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Petal.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(ElixirStream.Repo, {:shared, self()})
     end
 
     :ok

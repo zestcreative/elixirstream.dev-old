@@ -1,8 +1,8 @@
 import Config
 
 # Configure your database
-config :petal, Petal.Repo,
-  database: "petal_dev",
+config :elixir_stream, ElixirStream.Repo,
+  database: "elixir_stream_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -13,7 +13,7 @@ config :petal, Petal.Repo,
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with webpack to recompile .js and .css sources.
-config :petal, PetalWeb.Endpoint,
+config :elixir_stream, ElixirStreamWeb.Endpoint,
   http: [port: 4000],
   debug_errors: true,
   code_reloader: true,
@@ -54,13 +54,14 @@ config :petal, PetalWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :petal, PetalWeb.Endpoint,
+config :elixir_stream, ElixirStreamWeb.Endpoint,
   live_reload: [
+    iframe_attrs: [class: "hidden"],
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/petal_web/(live|views)/.*(ex)$",
-      ~r"lib/petal_web/templates/.*(eex)$"
+      ~r"lib/elixir_stream_web/(live|views)/.*(ex)$",
+      ~r"lib/elixir_stream_web/templates/.*(eex)$"
     ]
   ]
 

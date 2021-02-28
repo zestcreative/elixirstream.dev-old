@@ -7,15 +7,15 @@
 # General application configuration
 use Mix.Config
 
-config :petal,
-  ecto_repos: [Petal.Repo]
+config :elixir_stream,
+  ecto_repos: [ElixirStream.Repo]
 
 # Configures the endpoint
-config :petal, PetalWeb.Endpoint,
+config :elixir_stream, ElixirStreamWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "rQRP/j3RkvaPk6NcMaNmAifMzy19/BRrAJHZObDJMHAzxzfpVv6dJsI3Mjw07LUl",
-  render_errors: [view: PetalWeb.ErrorView, accepts: ~w(html json), layout: false],
-  pubsub_server: Petal.PubSub,
+  render_errors: [view: ElixirStreamWeb.ErrorView, accepts: ~w(html json), layout: false],
+  pubsub_server: ElixirStream.PubSub,
   live_view: [signing_salt: "tail8oyy"]
 
 # Configures Elixir's Logger

@@ -1,5 +1,5 @@
-defmodule PetalWeb.LayoutViewTest do
-  use PetalWeb.ConnCase, async: true
+defmodule ElixirStreamWeb.LayoutViewTest do
+  use ElixirStreamWeb.ConnCase, async: true
 
   # When testing helpers, you may want to import Phoenix.HTML and
   # use functions such as safe_to_string() to convert the helper

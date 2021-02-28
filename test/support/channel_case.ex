@@ -1,4 +1,4 @@
-defmodule PetalWeb.ChannelCase do
+defmodule ElixirStreamWeb.ChannelCase do
   @moduledoc """
   This module defines the test case to be used by
   channel tests.
@@ -11,7 +11,7 @@ defmodule PetalWeb.ChannelCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use PetalWeb.ChannelCase, async: true`, although
+  by setting `use ElixirStreamWeb.ChannelCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -21,18 +21,18 @@ defmodule PetalWeb.ChannelCase do
     quote do
       # Import conveniences for testing with channels
       import Phoenix.ChannelTest
-      import PetalWeb.ChannelCase
+      import ElixirStreamWeb.ChannelCase
 
       # The default endpoint for testing
-      @endpoint PetalWeb.Endpoint
+      @endpoint ElixirStreamWeb.Endpoint
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Petal.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(ElixirStream.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Petal.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(ElixirStream.Repo, {:shared, self()})
     end
 
     :ok

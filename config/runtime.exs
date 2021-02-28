@@ -13,7 +13,7 @@ if config_env() == :prod do
       For example: ecto://USER:PASS@HOST/DATABASE
       """
 
-  config :petal, Petal.Repo,
+  config :elixir_stream, ElixirStream.Repo,
     # ssl: true,
     url: database_url,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
@@ -25,7 +25,7 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
-  config :petal, PetalWeb.Endpoint,
+  config :elixir_stream, ElixirStreamWeb.Endpoint,
     server: true,
     http: [
       port: String.to_integer(System.get_env("PORT") || "4000"),

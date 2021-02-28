@@ -1,4 +1,4 @@
-defmodule PetalWeb.ConnCase do
+defmodule ElixirStreamWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -11,7 +11,7 @@ defmodule PetalWeb.ConnCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use PetalWeb.ConnCase, async: true`, although
+  by setting `use ElixirStreamWeb.ConnCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -22,20 +22,20 @@ defmodule PetalWeb.ConnCase do
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
-      import PetalWeb.ConnCase
+      import ElixirStreamWeb.ConnCase
 
-      alias PetalWeb.Router.Helpers, as: Routes
+      alias ElixirStreamWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing
-      @endpoint PetalWeb.Endpoint
+      @endpoint ElixirStreamWeb.Endpoint
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Petal.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(ElixirStream.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Petal.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(ElixirStream.Repo, {:shared, self()})
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}
