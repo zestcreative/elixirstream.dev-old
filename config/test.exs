@@ -8,7 +8,7 @@ import Config
 
 if System.get_env("CI") do
   config :elixir_stream, ElixirStream.Repo,
-    url: "postgres://postgres:postgres@postgres:5432/utility_test#{System.get_env("MIX_TEST_PARTITION")}",
+    url: "postgres://postgres:postgres@postgres:5432/elixir_stream_test#{System.get_env("MIX_TEST_PARTITION")}",
     pool: Ecto.Adapters.SQL.Sandbox
 else
   config :elixir_stream, ElixirStream.Repo,

@@ -5,6 +5,7 @@ defmodule ElixirStreamWeb.Router do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
+    plug :current_user
     plug :put_root_layout, {ElixirStreamWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
@@ -14,10 +15,18 @@ defmodule ElixirStreamWeb.Router do
     plug :accepts, ["json"]
   end
 
+  scope "/auth", ElixirStreamWeb do
+    pipe_through [:browser]
+    get "/:provider", AuthController, :request
+    get "/:provider/callback", AuthController, :callback
+  end
+
   scope "/", ElixirStreamWeb do
     pipe_through :browser
 
     live "/", PageLive, :index
+    get "/logout", AuthController, :delete
+    delete "/logout", AuthController, :delete
   end
 
   # Other scopes may use custom stacks.
@@ -39,5 +48,13 @@ defmodule ElixirStreamWeb.Router do
       pipe_through :browser
       live_dashboard "/dashboard", metrics: ElixirStreamWeb.Telemetry
     end
+  end
+
+  def current_user(conn, _opts) do
+    Plug.Conn.assign(
+      conn,
+      :current_user,
+      Plug.Conn.get_session(conn, :current_user)
+    )
   end
 end

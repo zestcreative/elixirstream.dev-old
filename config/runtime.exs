@@ -5,7 +5,6 @@
 import Config
 
 if config_env() == :prod do
-
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """
@@ -18,6 +17,10 @@ if config_env() == :prod do
     url: database_url,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
 
+  config :ueberauth, Ueberauth.Strategy.Github.OAuth,
+    client_id: System.fetch_env!("GITHUB_CLIENT_ID"),
+    client_secret: System.fetch_env!("GITHUB_CLIENT_SECRET")
+
   secret_key_base =
     System.get_env("SECRET_KEY_BASE") ||
       raise """
@@ -26,10 +29,7 @@ if config_env() == :prod do
       """
 
   config :elixir_stream, ElixirStreamWeb.Endpoint,
-    server: true,
-    http: [
-      port: String.to_integer(System.get_env("PORT") || "4000"),
-      transport_options: [socket_opts: [:inet6]]
-    ],
+    http: [port: System.fetch_env!("PORT"), compress: true],
+    url: [scheme: "https", host: System.fetch_env!("HOST"), port: 443],
     secret_key_base: secret_key_base
 end
