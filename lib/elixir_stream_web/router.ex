@@ -1,5 +1,6 @@
 defmodule ElixirStreamWeb.Router do
   use ElixirStreamWeb, :router
+  import Phoenix.LiveDashboard.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -13,6 +14,10 @@ defmodule ElixirStreamWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+  end
+
+  pipeline :require_admin do
+    plug :is_admin
   end
 
   scope "/auth", ElixirStreamWeb do
@@ -29,25 +34,9 @@ defmodule ElixirStreamWeb.Router do
     delete "/logout", AuthController, :delete
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", ElixirStreamWeb do
-  #   pipe_through :api
-  # end
-
-  # Enables LiveDashboard only for development
-  #
-  # If you want to use the LiveDashboard in production, you should put
-  # it behind authentication and allow only admins to access it.
-  # If your application does not have an admins-only section yet,
-  # you can use Plug.BasicAuth to set up some basic authentication
-  # as long as you are also using SSL (which you should anyway).
-  if Mix.env() in [:dev, :test] do
-    import Phoenix.LiveDashboard.Router
-
-    scope "/" do
-      pipe_through :browser
-      live_dashboard "/dashboard", metrics: ElixirStreamWeb.Telemetry
-    end
+  scope "/admin" do
+    pipe_through [:browser, :require_admin]
+    live_dashboard "/dashboard", metrics: ElixirStreamWeb.Telemetry
   end
 
   def current_user(conn, _opts) do
@@ -56,5 +45,15 @@ defmodule ElixirStreamWeb.Router do
       :current_user,
       Plug.Conn.get_session(conn, :current_user)
     )
+  end
+
+  defp is_admin(conn, _opts) do
+    if ElixirStreamWeb.UserFromAuth.admin?(conn.assigns.current_user) do
+      conn
+    else
+      conn
+      |> send_resp(401, "Go away")
+      |> halt()
+    end
   end
 end

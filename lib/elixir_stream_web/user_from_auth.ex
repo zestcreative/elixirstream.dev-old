@@ -4,12 +4,17 @@ defmodule ElixirStreamWeb.UserFromAuth do
   """
   require Logger
 
+  @admins ~w[github-643967]
+
+  def admin?(%{id: id}) when id in @admins, do: true
+  def admin?(_), do: false
+
   def find_or_create(%Ueberauth.Auth{} = auth) do
     {:ok, basic_info(auth)}
   end
 
   defp avatar_from_auth(%{info: %{urls: %{avatar_url: image}}}), do: image
-  defp avatar_from_auth(auth), do: nil
+  defp avatar_from_auth(_auth), do: nil
 
   defp basic_info(auth) do
     %{
