@@ -8,7 +8,11 @@
 import Config
 
 config :elixir_stream,
-  ecto_repos: [ElixirStream.Repo]
+  ecto_repos: [ElixirStream.Repo],
+  generators: [binary_id: true]
+
+config :elixir_stream, ElixirStream.Repo,
+  migration_timestamps: [type: :utc_datetime]
 
 # Configures the endpoint
 config :elixir_stream, ElixirStreamWeb.Endpoint,

@@ -18,7 +18,9 @@ defmodule ElixirStreamWeb.UserFromAuth do
 
   defp basic_info(auth) do
     %{
-      id: "#{auth.provider}-#{auth.uid}",
+      id: nil,
+      source: auth.provider,
+      source_id: auth.uid,
       name: name_from_auth(auth),
       avatar: avatar_from_auth(auth),
       username: username_from_auth(auth)

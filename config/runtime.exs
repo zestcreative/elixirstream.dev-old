@@ -33,3 +33,9 @@ if config_env() == :prod do
     url: [scheme: "https", host: System.fetch_env!("HOST"), port: 443],
     secret_key_base: secret_key_base
 end
+
+silicon_bin =
+  System.find_executable("silicon") || raise "needs 'silicon' installed."
+
+config :elixir_stream,
+  silicon_bin: silicon_bin
