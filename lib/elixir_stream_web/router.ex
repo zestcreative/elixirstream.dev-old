@@ -48,7 +48,7 @@ defmodule ElixirStreamWeb.Router do
   end
 
   defp is_admin(conn, _opts) do
-    if ElixirStreamWeb.UserFromAuth.admin?(conn.assigns.current_user) do
+    if ElixirStream.Accounts.admin?(conn.assigns.current_user) do
       conn
     else
       conn

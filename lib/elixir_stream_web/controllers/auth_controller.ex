@@ -7,7 +7,6 @@ defmodule ElixirStreamWeb.AuthController do
   def request(conn, _params) do
     # The GitHub strategy will intercept before hitting this
     url = Ueberauth.Strategy.Helpers.callback_url(conn)
-    Logger.debug(url)
     render(conn, "request.html", callback_url: url)
   end
 
@@ -18,7 +17,7 @@ defmodule ElixirStreamWeb.AuthController do
   end
 
   def callback(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
-    case ElixirStreamWeb.UserFromAuth.find_or_create(auth) do
+    case ElixirStream.Accounts.find_or_create(auth) do
       {:ok, user} ->
         conn
         |> put_flash(:info, "Welcome #{user.name}")

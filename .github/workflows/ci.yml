@@ -20,7 +20,7 @@ jobs:
       image: hexpm/elixir:1.11.3-erlang-23.2.4-alpine-3.13.1
     services:
       postgres:
-        image: postgres:13.2-alpine
+        image: postgres:12.2-alpine
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
@@ -35,7 +35,8 @@ jobs:
       run: |
         apk update
         apk upgrade
-        apk add --no-cache make bash zlib openssl openssh git g++ wget curl ca-certificates
+        apk add --no-cache make bash zlib openssl openssh git g++ wget curl ca-certificates rust
+        cargo install silicon
     - uses: actions/checkout@v1
     - uses: actions/cache@v1
       name: "Cache Mix"

@@ -15,6 +15,6 @@ defmodule ElixirStream.Repo.Migrations.AddUsers do
       timestamps()
     end
 
-    create unique_index("users", [:source, :source_id])
+    create unique_index("users", [:source_id, :source])
   end
 end

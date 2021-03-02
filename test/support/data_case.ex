@@ -24,6 +24,7 @@ defmodule ElixirStream.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import ElixirStream.DataCase
+      alias ElixirStream.Factory
     end
   end
 
