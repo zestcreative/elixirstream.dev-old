@@ -52,7 +52,7 @@ defmodule ElixirStreamWeb.Router do
       conn
     else
       conn
-      |> send_resp(401, "Go away")
+      |> redirect(to: "/")
       |> halt()
     end
   end
