@@ -1,0 +1,34 @@
+/* Tailwind applies the Ring colors to box-shadow which makes a
+ * small little box in the Monaco editor. Hide that */
+.monaco-mouse-cursor-text {
+  box-shadow: none !important;
+}
+
+/* The default VS theme has a white background which makes it
+ * look boxy. This makes the background transparent to let
+ * the container have the background color and border */
+.monaco-editor-background {
+  background-color: transparent !important;
+}
+
+.monaco-editor .margin {
+  background-color: transparent !important;
+}
+
+.monaco-editor-background {
+  background-color: transparent !important;
+}
+
+/* Vim/Emacs command mode input */
+#code-editor-status [type="text"] {
+  @apply py-0 px-1 text-xs focus:ring-brand-500 focus:border-brand-500;
+}
+
+.monaco-editor {
+  border-width: 1px;
+  @apply shadow-sm border-gray-300 rounded-md;
+}
+
+.monaco-editor.focused {
+  @apply ring-1 ring-brand-500 border-brand-500;
+}

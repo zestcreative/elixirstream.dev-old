@@ -1,10 +1,9 @@
 <%# _sidebar.html.leex template %>
-<% route = @conn.path_info |> List.first() || "/" %>
 
 <!-- Narrow sidebar-->
-<nav @navigate="open = false; currentRoute = $event.detail" x-data="{currentRoute: '<%= route %>'}" aria-label="Sidebar" class="hidden md:block md:flex-shrink-0 md:bg-gray-800 md:overflow-y-auto">
+<nav @navigate.window="currentRoute = $event.detail" x-data="{'currentRoute': '<%= current_alpine_route(@conn) %>'}" aria-label="Sidebar" class="hidden md:block md:flex-shrink-0 md:bg-gray-800 md:overflow-y-auto">
   <div class="relative w-20 flex flex-col p-3 space-y-3">
-    <%= active_link @conn, "tips", to: Routes.page_path(@conn, :index), class: "sidebar-link" do %>
+    <%= active_link @conn, "tips", to: Routes.tip_path(@conn, :index), class: "sidebar-link" do %>
       <span class="sr-only">Tips</span>
       <!-- Heroicon name: outline/light-bulb -->
       <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -20,8 +19,8 @@
       </svg>
     <% end %>
 
-    <%= active_link @conn, "new-tip", to: Routes.page_path(@conn, :index), class: "sidebar-link" do %>
-      <span class="sr-only">New Tip</span>
+    <%= active_link @conn, "tips-new", to: Routes.tip_path(@conn, :new), class: "sidebar-link" do %>
+      <span class="sr-only">Compose Tip</span>
       <!-- Heroicon name: outline/pencil-alt -->
       <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />

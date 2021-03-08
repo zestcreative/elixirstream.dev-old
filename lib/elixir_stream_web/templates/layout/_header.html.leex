@@ -3,7 +3,15 @@
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
   <meta name="description" content="Community of Elixir enthusiasts sharing tips, articles, and news. Made with ❤ with Elixir">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, shrink-to-fit=no"/>
+  <meta name="msapplication-TileColor" content="#9428ec">
+  <meta name="theme-color" content="#270642">
+  <link rel="canonical" href="https://elixirstream.dev<%= Phoenix.Controller.current_path(@conn) %>" />
+  <link rel="apple-touch-icon" sizes="180x180" type="image/png" href="<%= Routes.static_path(@conn, "/images/apple-touch-icon-180x180.png") %>">
+  <link rel="icon" type="image/png" sizes="16x16" href="<%= Routes.static_path(@conn, "/images/favicon-16x16.png") %>">
+  <link rel="icon" type="image/png" sizes="32x32" href="<%= Routes.static_path(@conn, "/images/favicon-32x32.png") %>">
+  <link rel="manifest" href="<%= Routes.robot_path(@conn, :site_webmanifest) %>" %>
+  <link rel="mask-icon" href="<%= Routes.static_path(@conn, "/images/safari-pinned-tab.svg") %>" color="#9428EC">
   <link rel="canonical" href="https://elixirstream.dev<%= Phoenix.Controller.current_path(@conn) %>" />
   <%= csrf_meta_tag() %>
   <%= live_title_tag assigns[:page_title] || "Home", suffix: " · ElixirStream" %>

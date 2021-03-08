@@ -1,13 +1,12 @@
 <%# _nav.html.leex template %>
-<% route = @conn.path_info |> List.first() || "/" %>
 
 <!-- Top nav-->
-<header x-data="{'profileOpen': false, 'mobileNav': false, currentRoute: '<%= route %>'}" class="flex-shrink-0 relative h-16 bg-white flex items-center" @navigate="open = false; currentRoute = $event.detail">
+<header x-data="{'profileOpen': false, 'mobileNav': false, 'currentRoute': '<%= current_alpine_route(@conn) %>'}" class="flex-shrink-0 relative h-16 bg-white flex items-center" @navigate.window="currentRoute = $event.detail">
   <!-- Logo area -->
   <div class="absolute inset-y-0 left-0 md:static md:flex-shrink-0">
-    <a href="#" class="flex items-center justify-center h-16 w-16 bg-brand-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-600 md:w-20">
-      <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/workflow-mark.svg?color=white" alt="Workflow">
-    </a>
+    <%= live_redirect to: "/", class: "flex items-center justify-center h-16 w-16 bg-brand-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-500 md:w-20" do %>
+      <%= img_tag Routes.static_path(@conn, "/images/logo.svg"), class: "h-12 w-auto", alt: "Elixir Stream" %>
+    <% end %>
   </div>
 
   <!-- Tablet Menu area -->
@@ -53,24 +52,16 @@
     <div class="ml-10 pr-4 flex-shrink-0 flex items-center space-x-10">
       <div class="flex items-center space-x-8">
         <!-- Desktop Profile -->
-        <div @click.away="profileOpen = false" class="relative inline-block text-left">
+        <div class="relative inline-block text-left">
           <%= if @current_user do %>
             <button @click="profileOpen = !profileOpen" type="button" class="bg-white rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-600" id="menu-1" aria-expanded="false" aria-haspopup="true">
               <span class="sr-only">Open user menu</span>
               <img class="h-8 w-8 rounded-full" src="<%= @current_user.avatar %>" alt="">
             </button>
 
-            <!--
-              Dropdown menu, show/hide based on menu state.
-
-              Entering: "transition ease-out duration-100"
-                From: "transform opacity-0 scale-95"
-                To: "transform opacity-100 scale-100"
-              Leaving: "transition ease-in duration-75"
-                From: "transform opacity-100 scale-100"
-                To: "transform opacity-0 scale-95"
-            -->
+            <!-- Dropdown menu -->
             <div
+              @click.away="profileOpen = false"
               x-show="profileOpen"
               x-cloak
               x-transition:enter="transition ease-out duration-100"
@@ -84,6 +75,7 @@
               aria-orientation="vertical"
               aria-labelledby="menu-1">
               <div class="py-1">
+                <%= link "Your Profile", to: Routes.profile_path(@conn, :edit), class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100", role: "menuitem" %>
                 <%= link "Sign Out", to: Routes.auth_path(@conn, :delete), class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100", role: "menuitem" %>
               </div>
               <%= if admin?(@current_user) do %>
@@ -148,7 +140,7 @@
       <div class="max-w-8xl mx-auto py-3 px-2 sm:px-4">
         <%= active_link @conn, "tips", "Tips", to: Routes.page_path(@conn, :index), class: "menu-link" %>
         <%= active_link @conn, "catalog", "Catalog", to: Routes.page_path(@conn, :index), class: "menu-link" %>
-        <%= active_link @conn, "new-tip", "New Tip", to: Routes.page_path(@conn, :index), class: "menu-link" %>
+        <%= active_link @conn, "tips-new", "New Tip", to: Routes.tip_path(@conn, :new), class: "menu-link" %>
       </div>
 
       <!-- Mobile Nav Profile -->

@@ -2,7 +2,7 @@ defmodule ElixirStream.Accounts.User do
   use ElixirStream.Schema
 
   @required_fields ~w[source source_id]a
-  @optional_fields ~w[name avatar username]a
+  @optional_fields ~w[name avatar username twitter editor_choice]a
 
   schema "users" do
     field :source, Ecto.Enum, values: [:github]
@@ -11,6 +11,8 @@ defmodule ElixirStream.Accounts.User do
     field :name, :string
     field :avatar, :string
     field :username, :string
+    field :twitter, :string
+    field :editor_choice, Ecto.Enum, values: [:gui, :emacs, :vim]
 
     timestamps()
   end

@@ -4,3 +4,5 @@
 @import "tailwindcss/utilities";
 @import "./phoenix-liveview.css";
 @import "./navigation.css";
+@import "./code-editor.css";
+

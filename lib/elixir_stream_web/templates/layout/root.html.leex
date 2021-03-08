@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <%= render "_header.html", assigns %>
-  <body data-version="<%= Application.spec(:elixir_stream, :vsn) %>">
+  <body class="antialiased" data-version="<%= Application.spec(:elixir_stream, :vsn) %>">
     <div class="h-screen overflow-hidden bg-gray-100 flex flex-col">
       <%= render "_nav.html", assigns %>
 

@@ -1,0 +1,23 @@
+<%# profile_live.html.leex template %>
+
+<ul>
+  <li>Name: <%= @current_user.name %></li>
+  <li>Username: <%= @current_user.username %></li>
+  <li>Avatar: <img class="h-10 w-10 inline-block rounded-full" src="<%= @current_user.avatar %>" alt=""></li>
+  <%= if @current_user.twitter do %>
+    <li>
+      Twitter: <%= @current_user.twitter %>
+      <button phx-click="disconnect-twitter">Disconnect Twitter</button>
+    </li>
+  <% end %>
+  <li>To update your username, avatar, or name, <%= link "edit your profile at GitHub", target: "_blank", to: "https://github.com/#{@current_user.username}" %> and then sign out and sign back into ElixirStream.dev</li>
+
+  <li>
+    <form phx-change="update-editor-choice" id="editor-choice">
+      <% IO.inspect @current_user %>
+      gui <%= radio_button :user, :editor, "gui", checked: @current_user.editor_choice == :gui %>
+      vim <%= radio_button :user, :editor, "vim", checked: @current_user.editor_choice == :vim %>
+      emacs <%= radio_button :user, :editor, "emacs", checked: @current_user.editor_choice == :emacs %>
+    </form>
+  </li>
+</ul>

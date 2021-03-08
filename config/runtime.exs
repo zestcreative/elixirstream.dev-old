@@ -17,10 +17,6 @@ if config_env() == :prod do
     url: database_url,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
 
-  config :ueberauth, Ueberauth.Strategy.Github.OAuth,
-    client_id: System.fetch_env!("GITHUB_CLIENT_ID"),
-    client_secret: System.fetch_env!("GITHUB_CLIENT_SECRET")
-
   secret_key_base =
     System.get_env("SECRET_KEY_BASE") ||
       raise """
@@ -32,10 +28,20 @@ if config_env() == :prod do
     http: [port: System.fetch_env!("PORT"), compress: true],
     url: [scheme: "https", host: System.fetch_env!("HOST"), port: 443],
     secret_key_base: secret_key_base
+
+  config :elixir_stream, ElixirStream.Guardian,
+    secret_key: secret_key_base
 end
 
 silicon_bin =
   System.find_executable("silicon") || raise "needs 'silicon' installed."
 
-config :elixir_stream,
-  silicon_bin: silicon_bin
+if config_env() != :test do
+  config :ueberauth, Ueberauth.Strategy.Github.OAuth,
+    client_id: System.fetch_env!("GITHUB_CLIENT_ID"),
+    client_secret: System.fetch_env!("GITHUB_CLIENT_SECRET")
+
+  config :ueberauth, Ueberauth.Strategy.Twitter.OAuth,
+    consumer_key: System.get_env("TWITTER_CONSUMER_KEY"),
+    consumer_secret: System.get_env("TWITTER_CONSUMER_SECRET")
+end

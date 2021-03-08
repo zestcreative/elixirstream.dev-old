@@ -8,7 +8,7 @@ defmodule ElixirStream.Schema do
 
       @primary_key {:id, :binary_id, read_after_writes: true}
       @foreign_key_type :binary_id
-      @timestamp_opts [type: :utc_datetime]
+      @timestamp_opts [type: :utc_datetime_usec]
     end
   end
 end

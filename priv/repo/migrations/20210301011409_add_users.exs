@@ -11,6 +11,9 @@ defmodule ElixirStream.Repo.Migrations.AddUsers do
       add :name, :string
       add :avatar, :string
       add :username, :string
+      add :twitter, :string
+
+      add :editor_choice, :string, null: false, default: "gui"
 
       timestamps()
     end

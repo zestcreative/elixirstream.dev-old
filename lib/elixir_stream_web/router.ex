@@ -6,6 +6,7 @@ defmodule ElixirStreamWeb.Router do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
+    plug ElixirStreamWeb.GuardianPipeline
     plug :current_user
     plug :put_root_layout, {ElixirStreamWeb.LayoutView, :root}
     plug :protect_from_forgery
@@ -20,6 +21,21 @@ defmodule ElixirStreamWeb.Router do
     plug :is_admin
   end
 
+  pipeline :robots do
+    plug :accepts, ~w[json txt xml webmanifest]
+  end
+
+  scope "/", ElixirStreamWeb, log: false do
+    pipe_through [:robots]
+
+    get "/sitemap.xml", RobotController, :sitemap
+    get "/robots.txt", RobotController, :robots
+    get "/rss.xml", RobotController, :rss
+    get "/site.webmanifest", RobotController, :site_webmanifest
+    get "/browserconfig.xml", RobotController, :browserconfig
+  end
+
+
   scope "/auth", ElixirStreamWeb do
     pipe_through [:browser]
     get "/:provider", AuthController, :request
@@ -30,8 +46,14 @@ defmodule ElixirStreamWeb.Router do
     pipe_through :browser
 
     live "/", PageLive, :index
+
     get "/logout", AuthController, :delete
     delete "/logout", AuthController, :delete
+    live "/profile", ProfileLive, :edit
+
+    live "/tips", TipLive, :index
+    live "/tips/new", TipLive, :new
+    live "/tips/:id", TipLive, :show
   end
 
   scope "/admin", as: :admin do
@@ -40,15 +62,11 @@ defmodule ElixirStreamWeb.Router do
   end
 
   def current_user(conn, _opts) do
-    Plug.Conn.assign(
-      conn,
-      :current_user,
-      Plug.Conn.get_session(conn, :current_user)
-    )
+    Plug.Conn.assign(conn, :current_user, ElixirStream.Accounts.Guardian.Plug.current_resource(conn))
   end
 
   defp is_admin(conn, _opts) do
-    if ElixirStream.Accounts.admin?(conn.assigns.current_user) do
+    if ElixirStream.Accounts.admin?(conn.assigns[:current_user]) do
       conn
     else
       conn

@@ -29,6 +29,7 @@ defmodule ElixirStream.MixProject do
       {:ecto_sql, "~> 3.4"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
+      {:guardian, "~> 2.0"},
       {:phoenix, "~> 1.5.7"},
       {:phoenix_ecto, "~> 4.1"},
       {:phoenix_html, "~> 2.11"},
@@ -40,6 +41,7 @@ defmodule ElixirStream.MixProject do
       {:telemetry_poller, "~> 0.4"},
       {:ueberauth, "~> 0.6"},
       {:ueberauth_github, "~> 0.7"},
+      {:ueberauth_twitter, "~> 0.3"},
       # Test/Dev
       {:ex_machina, "~> 2.6.0", only: :test},
       {:floki, ">= 0.27.0", only: :test},

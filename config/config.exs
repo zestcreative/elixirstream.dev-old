@@ -9,7 +9,9 @@ import Config
 
 config :elixir_stream,
   ecto_repos: [ElixirStream.Repo],
-  generators: [binary_id: true]
+  storage: ElixirStream.Storage.LocalImplementation,
+  generators: [binary_id: true],
+  app_env: Mix.env()
 
 config :elixir_stream, ElixirStream.Repo,
   migration_timestamps: [type: :utc_datetime]
@@ -30,6 +32,10 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :elixir_stream, ElixirStream.Accounts.Guardian,
+  issuer: "elixir_stream",
+  secret_key: "nhjkfizPNUD4NyjudO8Nuhu8X7EOPI5XYNnwn+8iI8Pd/mcI8DkZRoQJ9CZT/NXa"
+
 config :ueberauth, Ueberauth,
   json_library: Jason,
   providers: [
@@ -37,12 +43,9 @@ config :ueberauth, Ueberauth,
       allow_private_emails: true,
       send_redirect_uri: true,
       default_scope: "read:user"
-    ]}
+    ]},
+    twitter: {Ueberauth.Strategy.Twitter, []}
   ]
-
-config :ueberauth, Ueberauth.Strategy.Github.OAuth,
-  client_id: System.get_env("GITHUB_CLIENT_ID"),
-  client_secret: System.get_env("GITHUB_CLIENT_SECRET")
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

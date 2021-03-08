@@ -26,6 +26,13 @@ defmodule ElixirStreamWeb.Endpoint do
     gzip: false,
     only: ~w(css fonts images js favicon.ico robots.txt)
 
+  if Application.compile_env(:elixir_stream, :storage) == ElixirStream.Storage.LocalImplementation do
+    plug Plug.Static,
+      at: "/uploads",
+      from: Application.compile_env(:elixir_stream, :storage_dir),
+      gzip: false
+  end
+
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do
