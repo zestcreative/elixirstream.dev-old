@@ -14,7 +14,6 @@ hooks.PreviewImage = {
 
 hooks.MonocoEditor = {
   destroyed() {
-    console.log("Unmounting")
     this.editor.unmount()
   },
   mounted() {
@@ -49,8 +48,12 @@ hooks.MonocoEditor = {
             debounceMs: 1000
           })
           this.editor = editor
-
         });
+      this.handleEvent("set_code", ({ code }) => {
+        if (this.editor) {
+          this.editor.setValue(code)
+        }
+      })
     } else {
       console.error(`Could not mount Monaco onto ${where}`)
     }

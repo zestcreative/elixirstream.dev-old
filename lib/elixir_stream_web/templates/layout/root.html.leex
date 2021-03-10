@@ -2,13 +2,7 @@
 <html lang="en">
   <%= render "_header.html", assigns %>
   <body class="antialiased" data-version="<%= Application.spec(:elixir_stream, :vsn) %>">
-    <div class="h-screen overflow-hidden bg-gray-100 flex flex-col">
-      <%= render "_nav.html", assigns %>
-
-      <div class="min-h-0 flex-1 flex overflow-hidden">
-        <%= render "_sidebar.html", assigns %>
-        <%= @inner_content %>
-      </div>
-    </div>
+    <a class="skip-main" href="#main">Skip to main content</a>
+    <%= @inner_content %>
   </body>
 </html>

@@ -1,19 +1,23 @@
 defmodule ElixirStream.Catalog.Tip do
   use ElixirStream.Schema
+  alias ElixirStream.Accounts
 
-  @required_fields ~w[title description code]a
-  @optional_fields ~w[published_at]a
+  @required_fields ~w[approved title description code]a
+  @optional_fields ~w[published_at contributor_id]a
 
   schema "tips" do
     field :title, :string
     field :description, :string
     field :code, :string
     field :code_image_url, :string
+    field :searchable, ElixirStream.Ecto.TSVectorType
+    field :approved, :boolean, default: false
 
     field :published_at, :utc_datetime_usec
 
-    belongs_to :contributor, ElixirStream.Accounts.User
+    belongs_to :contributor, Accounts.User
     # has_many :modules, Catalog.Modules
+    # has_many :votes, Catalog.Vote
 
     timestamps()
   end
@@ -21,7 +25,8 @@ defmodule ElixirStream.Catalog.Tip do
   def changeset(struct_or_changeset, attrs) do
     struct_or_changeset
     |> cast(attrs, @optional_fields ++ @required_fields)
-    |> cast_assoc(:modules)
+    # |> cast_assoc(:modules)
+    |> assoc_constraint(:contributor)
     |> validate_required(@required_fields)
     |> ensure_published_at()
   end

@@ -1,23 +1,90 @@
 <%# profile_live.html.leex template %>
 
-<ul>
-  <li>Name: <%= @current_user.name %></li>
-  <li>Username: <%= @current_user.username %></li>
-  <li>Avatar: <img class="h-10 w-10 inline-block rounded-full" src="<%= @current_user.avatar %>" alt=""></li>
-  <%= if @current_user.twitter do %>
-    <li>
-      Twitter: <%= @current_user.twitter %>
-      <button phx-click="disconnect-twitter">Disconnect Twitter</button>
-    </li>
-  <% end %>
-  <li>To update your username, avatar, or name, <%= link "edit your profile at GitHub", target: "_blank", to: "https://github.com/#{@current_user.username}" %> and then sign out and sign back into ElixirStream.dev</li>
 
-  <li>
-    <form phx-change="update-editor-choice" id="editor-choice">
-      <% IO.inspect @current_user %>
-      gui <%= radio_button :user, :editor, "gui", checked: @current_user.editor_choice == :gui %>
-      vim <%= radio_button :user, :editor, "vim", checked: @current_user.editor_choice == :vim %>
-      emacs <%= radio_button :user, :editor, "emacs", checked: @current_user.editor_choice == :emacs %>
-    </form>
-  </li>
-</ul>
+<div class="shadow sm:rounded-md sm:overflow-hidden">
+  <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
+    <p>
+      <%= gettext("To update your username, avatar, or name, ") %>
+      <%= link "edit your profile at GitHub", class: "link", target: "_blank", to: "https://github.com/#{@current_user.username}" %>
+      <%= gettext("and then sign out and sign back into") %> ElixirStream.dev
+    </p>
+    <div>
+      <div class="block text-sm font-medium text-gray-700">
+        <%= gettext("Name") %>
+      </div>
+      <div class="mt-1">
+        <%= @current_user.name %>
+      </div>
+    </div>
+
+    <div>
+      <div class="block text-sm font-medium text-gray-700">
+        <%= gettext("Username") %>
+      </div>
+      <div class="mt-1">
+        <%= @current_user.username %>
+      </div>
+    </div>
+
+    <div>
+      <div class="block text-sm font-medium text-gray-700">
+        Twitter
+      </div>
+      <div class="mt-1">
+        <%= if @current_user.twitter do %>
+          Twitter: <%= @current_user.twitter %>
+          <button phx-click="disconnect-twitter">Disconnect Twitter</button>
+        <% else %>
+          <%= link to: Routes.auth_path(@socket, :request, "twitter"), class: "inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-black hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500", style: "background-color: #1da1f2" do %>
+            <svg class="text-white -ml-0.5 mr-2 h-4 w-4" fill="currentColor" role="img" xmlns="http://www.w3.org/2000/svg" aria-label="Twitter" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#1da1f2"/>
+              <path fill="#fff" d="M437 152a72 72 0 01-40 12a72 72 0 0032-40a72 72 0 01-45 17a72 72 0 00-122 65a200 200 0 01-145-74a72 72 0 0022 94a72 72 0 01-32-7a72 72 0 0056 69a72 72 0 01-32 1a72 72 0 0067 50a200 200 0 01-105 29a200 200 0 00309-179a200 200 0 0035-37"/>
+            </svg>
+            <%= gettext("Connect Twitter") %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <div>
+      <div class="block text-sm font-medium text-gray-700">
+        <%= gettext("Avatar") %>
+      </div>
+      <div class="mt-1">
+        <img class="h-12 w-12 inline-block rounded-full" src="<%= @current_user.avatar %>" alt="" />
+      </div>
+    </div>
+
+    <div>
+      <form phx-change="update-editor-choice" id="editor-choice">
+        <fieldset>
+          <div>
+            <legend class="text-base font-medium text-gray-900"><%= gettext("Editor Keymappings") %></legend>
+            <p class="text-sm text-gray-500"><%= gettext("When creating a tip, you can choose which keymappings in the code editor to use.") %></p>
+          </div>
+          <div class="mt-4 space-y-4">
+            <div class="flex items-center">
+              <%= label class: "block text-sm font-medium text-gray-700" do %>
+                <%= radio_button :user, :editor, "gui", class: "focus:ring-brand-500 mr-3 h-4 w-4 text-brand-600 border-gray-300", checked: @current_user.editor_choice == :gui %>
+                GUI
+              <% end %>
+            </div>
+
+            <div class="flex items-center">
+              <%= label class: "block text-sm font-medium text-gray-700" do %>
+                <%= radio_button :user, :editor, "vim", class: "focus:ring-brand-500 mr-3 h-4 w-4 text-brand-600 border-gray-300", checked: @current_user.editor_choice == :vim %>
+                VIM
+              <% end %>
+            </div>
+
+            <div class="flex items-center">
+              <%= label class: "block text-sm font-medium text-gray-700" do %>
+                <%= radio_button :user, :editor, "emacs", class: "focus:ring-brand-500 mr-3 h-4 w-4 text-brand-600 border-gray-300", checked: @current_user.editor_choice == :emacs %>
+                Emacs
+              <% end %>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+</div>

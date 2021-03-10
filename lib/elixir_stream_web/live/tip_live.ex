@@ -21,19 +21,17 @@ defmodule ElixirStreamWeb.TipLive do
     field :title, :string
     field :description, :string
     field :code, :string, default: @placeholder
-    field :code_image_url, :string
     field :published_at, :string
-    field :modules, {:array, :string}
   end
 
   @limit 1024 * 5
   def changeset(tip \\ %__MODULE__{}, attrs) do
     tip
-    |> Changeset.cast(attrs, ~w[title description code published_at modules]a)
-    |> Changeset.validate_required(~w[title description]a)
+    |> Changeset.cast(attrs, ~w[title description code published_at]a)
+    |> Changeset.validate_required(~w[title description published_at]a)
     |> Changeset.validate_length(:code, max: @limit)
     |> Changeset.validate_length(:description, max: @limit)
-    |> Changeset.validate_length(:title, max: 200)
+    |> Changeset.validate_length(:title, max: 50)
   end
 
   @impl true
@@ -42,54 +40,54 @@ defmodule ElixirStreamWeb.TipLive do
       Phoenix.PubSub.subscribe(ElixirStream.PubSub, "tips")
     end
 
-    tip = %__MODULE__{}
-
     {:ok,
       socket
-      |> assign(:tip, tip)
+      |> mount_new_tip()
+      |> assign_defaults()
       |> load_user(session)
-      |> assign(:changeset, changeset(tip, %{})),
-      temporary_assigns: [tips: Catalog.list_tips()]
     }
   end
 
   @impl true
-  def handle_event("validate", %{"tip" => params}, socket) do
-    IO.puts "HIT"
-    {:noreply,
-      socket.assigns.tip
-      |> changeset(params)
-      |> Map.put(:action, :insert)
-      |> IO.inspect
-      |> case do
-        {:ok, tip} ->
-          assign(socket, :tip, tip)
-        {:error, changeset} ->
-          assign(socket, :changeset, changeset)
-      end}
+  def handle_event("validate", %{"tip_live" => params}, socket) do
+    {:noreply, assign(socket, changeset: changeset(socket.assigns.tip, params))}
   end
 
-  @impl true
+  def handle_event("save", %{"tip_live" => params}, socket) do
+    params = Map.put(params, "contributor_id", socket.assigns.current_user.id)
+    with changeset <- changeset(socket.assigns.tip, params),
+         {:ok, _tip} <- Changeset.apply_action(changeset, :insert),
+         {:ok, published_at} <- Date.from_iso8601(params["published_at"]),
+         published_at <- Map.merge(DateTime.utc_now(), Map.from_struct(published_at)),
+         {:ok, _tip} <- params |> Map.put("published_at", published_at) |> Catalog.create_tip() do
+      {:noreply,
+        socket
+        |> mount_new_tip()
+        |> put_flash(:info, gettext("Successfully scheduled tip. Thank you so much for your contribution!"))
+        |> push_patch(to: Routes.tip_path(socket, :index))}
+    else
+      {:error, date_error} when date_error in ~w[invalid_date invalid_format]a ->
+        {:noreply, assign(socket, :changeset, Changeset.add_error(socket.assigns.changeset, :published_at, "is invalid"))}
+      {:error, changeset} ->
+        {:noreply, assign(socket, :changeset, changeset)}
+    end
+  end
+
+  def handle_event("code-updated", "", socket), do: handle_event("code-updated", nil, socket)
   def handle_event("code-updated", code, socket) do
-    params =
-      Map.merge(
-        socket.assigns.changeset.params,
-        %{"code" => code}
-      )
+    params = Map.merge(socket.assigns.changeset.params, %{"code" => code})
     {:noreply, assign(socket, :changeset, changeset(socket.assigns.changeset, params))}
   end
 
-  @impl true
   def handle_event("preview", _params, socket) do
     socket.assigns.changeset
-    |> Ecto.Changeset.apply_changes()
+    |> Changeset.apply_changes()
     |> Silicon.generate()
     |> case do
       {:ok, file} ->
-        changeset = Ecto.Changeset.put_change(socket.assigns.changeset, :code_image_url, file)
         {:noreply,
           socket
-          |> assign(changeset: changeset)
+          |> assign(:preview_image_url, file)
           |> push_event(:preview, %{imgUrl: file})}
       {:error, error} ->
         Logger.error(error)
@@ -97,20 +95,33 @@ defmodule ElixirStreamWeb.TipLive do
     end
   end
 
+  def handle_event("search", %{"search" => search}, socket) do
+    to  = Routes.tip_path(socket, :index, %{"search" => search})
+    {:noreply, socket |> push_patch(to: to)}
+  end
+
   @impl true
-  def handle_event("save", %{"tip" => params}, socket) do
-    with changeset <- changeset(socket.assigns.tip, params),
-         {:ok, _tip} <- Changeset.apply_action(changeset, :insert),
-         params <- Map.put(params, :contributor_id, socket.assigns.current_user.id),
-         {:ok, _tip} <- Catalog.create_tip(params) do
-      {:noreply,
-        socket
-        |> put_flash(:info, gettext("Successfully scheduled tip"))
-        |> assign(:tip, %__MODULE__{})}
-    else
-      {:error, changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
-    end
+  def handle_info([:tip, _action, _tip], %{assigns: %{searching: true}} = socket) do
+    {:noreply, socket}
+  end
+
+  def handle_info([:tip, :approve, tip], socket) do
+    {:noreply, assign(socket, tips: [tip | socket.assigns.tips])}
+  end
+
+  def handle_info([:tip, _action, _tip], socket), do: {:noreply, socket}
+
+  def handle_info([:vote, :new, %{tip_id: tip_id}], socket) do
+    tips =
+      Enum.map(
+        socket.assigns.tips,
+        fn
+          %{id: ^tip_id, votes: votes} = tip -> %{tip | votes: votes + 1}
+          tip -> tip
+        end
+      )
+
+    {:noreply, assign(socket, tips: tips)}
   end
 
   @impl true
@@ -125,5 +136,37 @@ defmodule ElixirStreamWeb.TipLive do
         {:noreply, assign(socket, :tip, tip)}
     end
   end
-  def handle_params(_index, _uri, socket), do: {:noreply, socket}
+
+  def handle_params(%{"search" => %{"q" => ""}}, _uri, socket) do
+    {:noreply, socket |> assign(:searching, false) |> push_patch(to: Routes.tip_path(socket, :index))}
+  end
+  def handle_params(%{"search" => params}, _uri, socket) do
+    search_changeset = search_changeset(params)
+
+    case Changeset.apply_action(search_changeset, :insert) do
+      {:ok, %{q: q}} ->
+        {:noreply, assign(socket, search_changeset: search_changeset, searching: true, tips: Catalog.search_tips(q))}
+
+      {:error, search_changeset} ->
+        {:noreply, assign(socket, search_changeset: search_changeset)}
+    end
+  end
+
+  def handle_params(params, _uri, socket) do
+    {:noreply, assign(socket, tips: load_tips(params), search_changeset: search_changeset(%{}))}
+  end
+
+  defp mount_new_tip(socket) do
+    tip = %__MODULE__{}
+    changeset = changeset(tip, %{published_at: Date.utc_today() |> Date.to_iso8601()})
+    placeholder_code = Changeset.get_field(changeset, :code)
+    socket
+    |> assign(:tip, tip)
+    |> assign(:preview_image_url, nil)
+    |> assign(:changeset, changeset)
+    |> push_event(:set_code, %{code: placeholder_code})
+  end
+
+  defp load_tips(%{"sort" => "popular"}), do: Catalog.list_tips(:popular)
+  defp load_tips(_), do: Catalog.list_tips(:latest)
 end

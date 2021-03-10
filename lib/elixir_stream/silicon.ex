@@ -2,7 +2,9 @@ defmodule ElixirStream.Silicon do
   require Logger
   @silicon_bin "bin/silicon.sh"
 
-  def generate(tip, opts \\ []) do
+  def generate(tip, opts \\ [])
+  def generate(%{code: nil}, _opts), do: {:ok, nil}
+  def generate(tip, opts) do
     theme = Keyword.get(opts, :theme, "Monokai Extended Bright")
     extension = Keyword.get(opts, :extension, "ex")
     tmp_id = :crypto.hash(:md5, tip.code) |> Base.encode64 |> String.replace("/", "")

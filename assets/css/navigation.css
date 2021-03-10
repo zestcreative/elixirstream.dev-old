@@ -1,10 +1,9 @@
 .sidebar-link {
-  @apply flex-shrink-0 inline-flex items-center justify-center h-14 w-14 rounded-lg;
-  @apply text-gray-400 hover:bg-gray-700;
+  @apply text-gray-600 hover:bg-gray-50 group flex items-center px-3 py-2 text-sm font-medium rounded-md
 }
 
 .sidebar-link.active {
-  @apply bg-gray-900 text-white;
+  @apply bg-gray-200 text-gray-900;
 }
 
 .menu-link {

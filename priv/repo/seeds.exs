@@ -25,12 +25,13 @@ user = Repo.insert!(%User{
 
 Repo.insert!(%Tip{
   title: "Pattern match on strings",
+  approved: true,
   description: """
   You may know that the <> operator is used to concat binaries (strings)...but did you also know you can use it for pattern matching binaries?
   """,
   code: """
-  iex> You can" <> " " <> "concat binaries!"
-  "You can concat binaries!"
+  iex> "You can" <> " " <> "concat binaries!"
+  #=> "You can concat binaries!"
 
   iex> case "user:b4c52a55-e2d9-446f-908d-42c9812f2e8a" do
          "admin:" <> id -> {:admin, id}
@@ -45,6 +46,7 @@ Repo.insert!(%Tip{
 
 Repo.insert!(%Tip{
   title: "Oban unique jobs",
+  approved: true,
   description: """
   Did you know that Oban lets you specify constraints to prevent enqueuing duplicate jobs? Uniqueness is enforced as jobs are inserted, dynamically and atomically.
 

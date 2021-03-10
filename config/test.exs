@@ -14,6 +14,9 @@ else
   config :elixir_stream, ElixirStream.Repo,
     database: "elixir_stream_test#{System.get_env("MIX_TEST_PARTITION")}",
     hostname: "localhost",
+    username: "elixir_stream",
+    password: "password",
+    port: 54321,
     pool: Ecto.Adapters.SQL.Sandbox
 end
 

@@ -3,9 +3,25 @@ defmodule ElixirStreamWeb.Live.Auth do
 
   import Phoenix.LiveView
   import ElixirStreamWeb.Gettext
+  alias Ecto.Changeset
 
   @claims %{"typ" => "access"}
   @token_key "guardian_default_token"
+
+  def assign_defaults(socket) do
+    Phoenix.LiveView.assign(
+      socket,
+      searching: false,
+      search_changeset: search_changeset(%{})
+    )
+  end
+
+  @search_types %{module: :string, q: :string}
+  def search_changeset(params) do
+    {%{}, @search_types}
+    |> Changeset.cast(params, Map.keys(@search_types))
+    |> Changeset.validate_length(:q, max: 75)
+  end
 
   def require_user(socket, session, opts \\ []) do
     socket = load_user(socket, session)

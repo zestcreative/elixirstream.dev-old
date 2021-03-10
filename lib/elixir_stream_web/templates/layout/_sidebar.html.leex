@@ -1,30 +1,85 @@
 <%# _sidebar.html.leex template %>
 
-<!-- Narrow sidebar-->
-<nav @navigate.window="currentRoute = $event.detail" x-data="{'currentRoute': '<%= current_alpine_route(@conn) %>'}" aria-label="Sidebar" class="hidden md:block md:flex-shrink-0 md:bg-gray-800 md:overflow-y-auto">
-  <div class="relative w-20 flex flex-col p-3 space-y-3">
-    <%= active_link @conn, "tips", to: Routes.tip_path(@conn, :index), class: "sidebar-link" do %>
-      <span class="sr-only">Tips</span>
-      <!-- Heroicon name: outline/light-bulb -->
-      <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-      </svg>
-    <% end %>
+<!-- Side navigation -->
+<div class="hidden lg:block lg:col-span-3 xl:col-span-2">
+  <nav @navigate.window="currentRoute = $event.detail" x-data="{'currentRoute': '<%= current_alpine_route(@socket) %>'}" aria-label="Sidebar" class="sticky top-4 divide-y divide-gray-300">
+    <div class="pb-8 space-y-1">
+      <%= active_link @socket, "tips-latest", to: Routes.tip_path(@socket, :index, %{"sort" => "latest"}), class: "sidebar-link" do %>
+        <!-- Heroicon name: outline/home -->
+        <svg class="text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
+        <span class="truncate">
+          Newest
+        </span>
+      <% end %>
 
-    <%= active_link @conn, "catalog", to: Routes.page_path(@conn, :index), class: "sidebar-link" do %>
-      <span class="sr-only">Catalog</span>
-      <!-- Heroicon name: outline/book-open -->
-      <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-      </svg>
-    <% end %>
+      <%= active_link @socket, "tips-popular", to: Routes.tip_path(@socket, :index, %{"sort" => "popular"}), class: "sidebar-link" do %>
+        <!-- Heroicon name: outline/fire -->
+        <svg class="text-gray-400 group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" />
+        </svg>
+        <span class="truncate">
+          Popular
+        </span>
+      <% end %>
+    </div>
+    <div class="pt-10">
+      <p class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider" id="communities-headline">
+        Popular Modules
+      </p>
+      <div class="mt-3 space-y-2" aria-labelledby="communities-headline">
+        <a href="#" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-50">
+          <span class="truncate">
+            Movies
+          </span>
+        </a>
 
-    <%= active_link @conn, "tips-new", to: Routes.tip_path(@conn, :new), class: "sidebar-link" do %>
-      <span class="sr-only">Compose Tip</span>
-      <!-- Heroicon name: outline/pencil-alt -->
-      <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-      </svg>
-    <% end %>
-  </div>
-</nav>
+        <a href="#" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-50">
+          <span class="truncate">
+            Food
+          </span>
+        </a>
+
+        <a href="#" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-50">
+          <span class="truncate">
+            Sports
+          </span>
+        </a>
+
+        <a href="#" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-50">
+          <span class="truncate">
+            Animals
+          </span>
+        </a>
+
+        <a href="#" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-50">
+          <span class="truncate">
+            Science
+          </span>
+        </a>
+
+        <a href="#" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-50">
+          <span class="truncate">
+            Dinosaurs
+          </span>
+        </a>
+
+        <a href="#" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-50">
+          <span class="truncate">
+            Talents
+          </span>
+        </a>
+
+        <a href="#" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-50">
+          <span class="truncate">
+            Gaming
+          </span>
+        </a>
+      </div>
+    </div>
+  </nav>
+</div>
+
+

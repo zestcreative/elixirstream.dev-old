@@ -4,7 +4,9 @@ defmodule ElixirStreamWeb.ProfileLive do
 
   @impl true
   def mount(_params, session, socket) do
-    require_user(socket, session)
+    socket
+    |> assign_defaults()
+    |> require_user(session)
   end
 
   @impl true
@@ -25,5 +27,10 @@ defmodule ElixirStreamWeb.ProfileLive do
         {:ok, user} -> assign(socket, :current_user, user)
       end
     }
+  end
+
+  def handle_event("search", %{"search" => search}, socket) do
+    to  = Routes.tip_path(socket, :index, %{"search" => search})
+    {:noreply, socket |> push_redirect(to: to)}
   end
 end

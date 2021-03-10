@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:12.2-alpine
+    restart: always
+    command: postgres -c 'max_connections=200'
+    environment:
+      - POSTGRES_DB=elixir_stream_dev
+      - POSTGRES_USER=elixir_stream
+      - POSTGRES_PASSWORD=password
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - "./priv/db:/var/lib/postgresql/data"
+    ports:
+      - "54321:5432"
