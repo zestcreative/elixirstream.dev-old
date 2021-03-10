@@ -73,6 +73,18 @@ defmodule ElixirStreamWeb.TipLive do
     end
   end
 
+  def handle_event("upvote-tip", %{"tip-id" => tip_id}, socket) do
+    Catalog.upvote_tip(tip_id, socket.assigns.current_user)
+    {:noreply, socket}
+  end
+  def handle_event("upvote-tip", _, socket), do: {:noreply, socket}
+
+  def handle_event("downvote-tip", %{"tip-id" => tip_id}, socket) do
+    Catalog.downvote_tip(tip_id, socket.assigns.current_user)
+    {:noreply, socket}
+  end
+  def handle_event("downvote-tip", _, socket), do: {:noreply, socket}
+
   def handle_event("code-updated", "", socket), do: handle_event("code-updated", nil, socket)
   def handle_event("code-updated", code, socket) do
     params = Map.merge(socket.assigns.changeset.params, %{"code" => code})
@@ -109,14 +121,13 @@ defmodule ElixirStreamWeb.TipLive do
     {:noreply, assign(socket, tips: [tip | socket.assigns.tips])}
   end
 
-  def handle_info([:tip, _action, _tip], socket), do: {:noreply, socket}
-
-  def handle_info([:vote, :new, %{tip_id: tip_id}], socket) do
+  def handle_info([:tip, :update, %{id: tip_id} = updated_tip], socket) do
+    socket = load_my_upvotes(socket)
     tips =
       Enum.map(
         socket.assigns.tips,
         fn
-          %{id: ^tip_id, votes: votes} = tip -> %{tip | votes: votes + 1}
+          %{id: ^tip_id} -> updated_tip
           tip -> tip
         end
       )
@@ -153,7 +164,9 @@ defmodule ElixirStreamWeb.TipLive do
   end
 
   def handle_params(params, _uri, socket) do
-    {:noreply, assign(socket, tips: load_tips(params), search_changeset: search_changeset(%{}))}
+    {:noreply, socket
+    |> load_tips(params)
+    |> assign(search_changeset: search_changeset(%{}))}
   end
 
   defp mount_new_tip(socket) do
@@ -167,6 +180,23 @@ defmodule ElixirStreamWeb.TipLive do
     |> push_event(:set_code, %{code: placeholder_code})
   end
 
-  defp load_tips(%{"sort" => "popular"}), do: Catalog.list_tips(:popular)
-  defp load_tips(_), do: Catalog.list_tips(:latest)
+  defp load_tips(socket, %{"sort" => "popular"}) do
+    socket
+    |> assign(tips: Catalog.list_tips(:popular))
+    |> load_my_upvotes()
+  end
+  defp load_tips(socket, _) do
+    socket
+    |> assign(tips: Catalog.list_tips(:latest))
+    |> load_my_upvotes()
+  end
+
+  defp load_my_upvotes(socket) do
+    if user = socket.assigns.current_user do
+      tip_ids = Enum.map(socket.assigns.tips, & &1.id)
+      assign(socket, :upvoted_tip_ids, Catalog.tips_upvoted_by_user(user, where_id: tip_ids) |> IO.inspect)
+    else
+      socket
+    end
+  end
 end

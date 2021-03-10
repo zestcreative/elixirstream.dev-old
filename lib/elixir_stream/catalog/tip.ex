@@ -1,9 +1,9 @@
 defmodule ElixirStream.Catalog.Tip do
   use ElixirStream.Schema
-  alias ElixirStream.Accounts
+  alias ElixirStream.{Accounts, Catalog}
 
   @required_fields ~w[approved title description code]a
-  @optional_fields ~w[published_at contributor_id]a
+  @optional_fields ~w[upvote_count published_at contributor_id]a
 
   schema "tips" do
     field :title, :string
@@ -16,8 +16,10 @@ defmodule ElixirStream.Catalog.Tip do
     field :published_at, :utc_datetime_usec
 
     belongs_to :contributor, Accounts.User
+    has_many :upvotes, Catalog.Upvote
     # has_many :modules, Catalog.Modules
-    # has_many :votes, Catalog.Vote
+
+    field :upvote_count, :integer
 
     timestamps()
   end

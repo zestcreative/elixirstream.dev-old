@@ -32,10 +32,10 @@
       </div>
       <div class="mt-1">
         <%= if @current_user.twitter do %>
-          Twitter: <%= @current_user.twitter %>
-          <button phx-click="disconnect-twitter">Disconnect Twitter</button>
+          <p><%= @current_user.twitter %></p>
+          <button phx-click="disconnect-twitter" style="background-color: #1da1f2" class="mt-1 inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500">Disconnect Twitter</button>
         <% else %>
-          <%= link to: Routes.auth_path(@socket, :request, "twitter"), class: "inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-black hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500", style: "background-color: #1da1f2" do %>
+          <%= link to: Routes.auth_path(@socket, :request, "twitter"), class: "inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500", style: "background-color: #1da1f2" do %>
             <svg class="text-white -ml-0.5 mr-2 h-4 w-4" fill="currentColor" role="img" xmlns="http://www.w3.org/2000/svg" aria-label="Twitter" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#1da1f2"/>
               <path fill="#fff" d="M437 152a72 72 0 01-40 12a72 72 0 0032-40a72 72 0 01-45 17a72 72 0 00-122 65a200 200 0 01-145-74a72 72 0 0022 94a72 72 0 01-32-7a72 72 0 0056 69a72 72 0 01-32 1a72 72 0 0067 50a200 200 0 01-105 29a200 200 0 00309-179a200 200 0 0035-37"/>
             </svg>
