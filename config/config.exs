@@ -32,6 +32,11 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :elixir_stream, Oban,
+  repo: ElixirStream.Repo,
+  plugins: [],
+  queues: [publish_tip: 1]
+
 config :elixir_stream, ElixirStream.Accounts.Guardian,
   issuer: "elixir_stream",
   secret_key: "nhjkfizPNUD4NyjudO8Nuhu8X7EOPI5XYNnwn+8iI8Pd/mcI8DkZRoQJ9CZT/NXa"

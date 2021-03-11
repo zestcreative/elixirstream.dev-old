@@ -27,11 +27,13 @@ defmodule ElixirStream.MixProject do
   defp deps do
     [
       {:ecto_sql, "~> 3.4"},
+      {:finch, "~> 0.6"},
       {:gettext, "~> 0.11"},
       {:guardian, "~> 2.0"},
       {:jason, "~> 1.0"},
       {:makeup, "~> 1.0"},
       {:makeup_elixir, "~> 0.14"},
+      {:oban, "~> 2.5.0"},
       {:phoenix, "~> 1.5.7"},
       {:phoenix_ecto, "~> 4.1"},
       {:phoenix_html, "~> 2.11"},

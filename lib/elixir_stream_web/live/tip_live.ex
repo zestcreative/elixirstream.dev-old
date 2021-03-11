@@ -30,7 +30,7 @@ defmodule ElixirStreamWeb.TipLive do
     |> Changeset.cast(attrs, ~w[title description code published_at]a)
     |> Changeset.validate_required(~w[title description published_at]a)
     |> Changeset.validate_length(:code, max: @limit)
-    |> Changeset.validate_length(:description, max: @limit)
+    |> Changeset.validate_length(:description, min: 20, max: 200)
     |> Changeset.validate_length(:title, max: 50)
   end
 
@@ -113,14 +113,9 @@ defmodule ElixirStreamWeb.TipLive do
   end
 
   @impl true
-  def handle_info([:tip, _action, _tip], %{assigns: %{searching: true}} = socket) do
-    {:noreply, socket}
-  end
-
-  def handle_info([:tip, :approve, tip], socket) do
-    {:noreply, assign(socket, tips: [tip | socket.assigns.tips])}
-  end
-
+  def handle_info([:tip, _action, _tip], %{assigns: %{searching: true}} = socket), do: {:noreply, socket}
+  def handle_info([:tip, _action, _tip], socket), do: {:noreply, socket}
+  def handle_info([:tip, :approve, tip], socket), do: {:noreply, assign(socket, tips: [tip | socket.assigns.tips])}
   def handle_info([:tip, :update, %{id: tip_id} = updated_tip], socket) do
     socket = load_my_upvotes(socket)
     tips =
@@ -192,7 +187,7 @@ defmodule ElixirStreamWeb.TipLive do
   end
 
   defp load_my_upvotes(socket) do
-    if user = socket.assigns.current_user do
+    if user = socket.assigns[:current_user] do
       tip_ids = Enum.map(socket.assigns.tips, & &1.id)
       assign(socket, :upvoted_tip_ids, Catalog.tips_upvoted_by_user(user, where_id: tip_ids) |> IO.inspect)
     else

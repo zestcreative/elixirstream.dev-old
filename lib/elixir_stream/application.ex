@@ -14,7 +14,9 @@ defmodule ElixirStream.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: ElixirStream.PubSub},
       # Start the Endpoint (http/https)
-      ElixirStreamWeb.Endpoint
+      ElixirStreamWeb.Endpoint,
+      {Finch, name: TwitterFinch},
+      {Oban, Application.get_env(:elixir_stream, Oban)}
       # Start a worker by calling: ElixirStream.Worker.start_link(arg)
       # {ElixirStream.Worker, arg}
     ]

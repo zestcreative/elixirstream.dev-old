@@ -75,7 +75,7 @@ defmodule ElixirStream.Catalog do
         PubSub.broadcast(ElixirStream.PubSub, @tip_topic, [:tip, :update, updated_tip])
         {:ok, updated_tip}
 
-      error ->
+      _error ->
         {:ok, nil}
     end
   end
@@ -151,6 +151,7 @@ defmodule ElixirStream.Catalog do
       {:ok, tip} ->
         tip = tip_preloads(tip)
         PubSub.broadcast(ElixirStream.PubSub, @tip_topic, [:tip, :approved, tip])
+
         {:ok, tip}
 
       error ->
