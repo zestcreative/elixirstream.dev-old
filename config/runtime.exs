@@ -31,12 +31,11 @@ if config_env() == :prod do
 
   config :elixir_stream, ElixirStream.Guardian,
     secret_key: secret_key_base
-end
 
-silicon_bin =
-  System.find_executable("silicon") || raise "needs 'silicon' installed."
+  config :ex_aws,
+    access_key_id: [System.fetch_env!("S3_ACCESS_KEY_ID")],
+    secret_access_key: [System.fetch_env!("S3_SECRET_ACCESS_KEY")]
 
-if config_env() != :test do
   config :ueberauth, Ueberauth.Strategy.Github.OAuth,
     client_id: System.fetch_env!("GITHUB_CLIENT_ID"),
     client_secret: System.fetch_env!("GITHUB_CLIENT_SECRET")
@@ -45,3 +44,6 @@ if config_env() != :test do
     consumer_key: System.get_env("TWITTER_LOGIN_CONSUMER_KEY"),
     consumer_secret: System.get_env("TWITTER_LOGIN_CONSUMER_SECRET")
 end
+
+silicon_bin =
+  System.find_executable("silicon") || raise "needs 'silicon' installed."

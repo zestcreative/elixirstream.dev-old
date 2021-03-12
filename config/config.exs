@@ -37,9 +37,20 @@ config :elixir_stream, Oban,
   plugins: [],
   queues: [publish_tip: 1]
 
+config :elixir_stream, ElixirStream.Storage,
+  bucket: "elixirstream.dev"
+
 config :elixir_stream, ElixirStream.Accounts.Guardian,
   issuer: "elixir_stream",
   secret_key: "nhjkfizPNUD4NyjudO8Nuhu8X7EOPI5XYNnwn+8iI8Pd/mcI8DkZRoQJ9CZT/NXa"
+
+config :ex_aws,
+  json_codec: Jason,
+  http_client: ElixirStream.Storage.ExAwsClient,
+  region: "us-east-1"
+
+config :ex_aws, :s3,
+  host: "us-east-1.linodeobjects.com"
 
 config :ueberauth, Ueberauth,
   json_library: Jason,

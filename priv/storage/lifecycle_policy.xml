@@ -1,0 +1,29 @@
+<LifecycleConfiguration>
+    <Rule>
+        <ID>delete-all-objects</ID>
+        <Prefix>tmp</Prefix>
+        <Status>Enabled</Status>
+        <Expiration>
+            <Days>1</Days>
+        </Expiration>
+    </Rule>
+    <Rule>
+        <ID>delete-incomplete-multipart-uploads</ID>
+        <Prefix></Prefix>
+        <Status>Enabled</Status>
+        <AbortIncompleteMultipartUpload>
+            <DaysAfterInitiation>3</DaysAfterInitiation>
+        </AbortIncompleteMultipartUpload>
+    </Rule>
+    <Rule>
+        <ID>delete-prior-versions</ID>
+        <Prefix></Prefix>
+        <Status>Enabled</Status>
+        <Expiration>
+            <Days>10</Days>
+        </Expiration>
+        <NoncurrentVersionExpiration>
+            <NoncurrentDays>3</NoncurrentDays>
+        </NoncurrentVersionExpiration>
+    </Rule>
+</LifecycleConfiguration>

@@ -15,7 +15,8 @@ defmodule ElixirStream.Application do
       {Phoenix.PubSub, name: ElixirStream.PubSub},
       # Start the Endpoint (http/https)
       ElixirStreamWeb.Endpoint,
-      {Finch, name: TwitterFinch},
+      Supervisor.child_spec({Finch, name: TwitterFinch}, id: :twitter_finch),
+      Supervisor.child_spec({Finch, name: ExAwsFinch}, id: :ex_aws_finch),
       {Oban, Application.get_env(:elixir_stream, Oban)}
       # Start a worker by calling: ElixirStream.Worker.start_link(arg)
       # {ElixirStream.Worker, arg}

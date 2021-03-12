@@ -2,7 +2,7 @@ defmodule ElixirStreamWeb.TipLive do
   use ElixirStreamWeb, :live_view
   use Ecto.Schema
   alias Ecto.Changeset
-  alias ElixirStream.{Catalog, Silicon}
+  alias ElixirStream.Catalog
   require Logger
 
   @placeholder """
@@ -94,15 +94,15 @@ defmodule ElixirStreamWeb.TipLive do
   def handle_event("preview", _params, socket) do
     socket.assigns.changeset
     |> Changeset.apply_changes()
-    |> Silicon.generate()
+    |> Catalog.generate_codeshot()
     |> case do
-      {:ok, file} ->
+      {:ok, url} ->
         {:noreply,
           socket
-          |> assign(:preview_image_url, file)
-          |> push_event(:preview, %{imgUrl: file})}
+          |> assign(:preview_image_url, url)
+          |> push_event(:preview, %{imgUrl: url})}
       {:error, error} ->
-        Logger.error(error)
+        Logger.error(inspect(error))
         {:noreply, socket}
     end
   end
@@ -189,7 +189,7 @@ defmodule ElixirStreamWeb.TipLive do
   defp load_my_upvotes(socket) do
     if user = socket.assigns[:current_user] do
       tip_ids = Enum.map(socket.assigns.tips, & &1.id)
-      assign(socket, :upvoted_tip_ids, Catalog.tips_upvoted_by_user(user, where_id: tip_ids) |> IO.inspect)
+      assign(socket, :upvoted_tip_ids, Catalog.tips_upvoted_by_user(user, where_id: tip_ids))
     else
       socket
     end

@@ -1,17 +1,19 @@
 defmodule ElixirStream.Storage do
-  @type file :: Path.t()
-  @type key :: String.t()
-
-  @callback get(key) :: {:ok, file} | {:error, term}
-  @callback put(key, file) :: {:ok, file} | {:error, term}
+  @callback download(Path.t(), Path.t(), Keyword.t()) :: {:ok, Path.t()} | {:error, term}
+  @callback url(Path.t(), Keyword.t()) :: {:ok, String.t()} | {:error, term}
+  @callback upload(Path.t(), Path.t(), Keyword.t()) :: {:ok, map()} | {:error, term}
 
   defp impl(), do: Application.get_env(:elixir_stream, :storage)
 
-  def get(key) do
-    impl().get(key)
+  def download(remote_path, local_path, opts \\ []) do
+    impl().download(remote_path, local_path, opts)
   end
 
-  def put(key, file) do
-    impl().put(key, file)
+  def upload(local_file, remote_path, opts \\ []) do
+    impl().upload(local_file, remote_path, opts)
+  end
+
+  def url(remote_path, opts \\ []) do
+    impl().url(remote_path, opts)
   end
 end

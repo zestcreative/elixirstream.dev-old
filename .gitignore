@@ -35,3 +35,5 @@ npm-debug.log
 /priv/db
 .elixir_ls
 /uploads
+
+config/*.secret.exs

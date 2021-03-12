@@ -8,23 +8,23 @@
 @import "./highlight.css";
 
 a.skip-main {
-    left: -999px;
-    position: absolute;
-    top: auto;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    z-index: -999;
+  left: -999px;
+  position: absolute;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: -999;
 }
 
 a.skip-main:focus {
-    @apply text-xl p-4 border-red-500 border-2 bg-gray-200 text-black font-black;
-    left: auto;
-    top: auto;
-    width: 30%;
-    height: auto;
-    overflow: auto;
-    margin: 0 35%;
-    text-align: center;
-    z-index: 999;
+  @apply text-xl p-4 border-red-500 border-2 bg-gray-200 text-black font-black;
+  left: auto;
+  top: auto;
+  width: 30%;
+  height: auto;
+  overflow: auto;
+  margin: 0 35%;
+  text-align: center;
+  z-index: 999;
 }

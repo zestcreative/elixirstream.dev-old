@@ -1,7 +1,7 @@
 defmodule ElixirStream.Catalog do
   alias ElixirStream.Catalog.{Query, Tip, Upvote}
   alias ElixirStream.Accounts.{User}
-  alias ElixirStream.Repo
+  alias ElixirStream.{Silicon, Storage, Repo}
   alias Phoenix.PubSub
   require Ecto.Query
 
@@ -123,7 +123,6 @@ defmodule ElixirStream.Catalog do
     |> Query.return([:id])
     |> Repo.all()
     |> Enum.map(& &1.id)
-    |> IO.inspect(label: "UPVOTED")
   end
 
   @spec create_tip(map()) :: {:ok, %Tip{}}
@@ -156,6 +155,17 @@ defmodule ElixirStream.Catalog do
 
       error ->
         error
+    end
+  end
+
+  @codeshot_upload_folder "codeshots"
+  def generate_codeshot(tip) do
+    with {:ok, file} <- Silicon.generate(tip),
+         tmp_id <- Path.basename(file),
+         {:ok, %{body: %{key: key}}} <- Storage.upload(file, Path.join(@codeshot_upload_folder, tip.id || tmp_id)),
+         {:ok, url} <- Storage.url(key, expires_in: :timer.minutes(5), grant_read: :public_read)
+    do
+      {:ok, url}
     end
   end
 end

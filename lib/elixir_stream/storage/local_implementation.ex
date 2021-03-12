@@ -1,26 +1,32 @@
 defmodule ElixirStream.Storage.LocalImplementation do
   @behaviour ElixirStream.Storage
+  @bucket Application.compile_env(:elixir_stream, ElixirStream.Storage)[:bucket]
 
-  def get(key) do
-    path = Path.join([dir(), key])
-
+  def url(key, _opts \\ []) do
+    path = Path.join(["uploads", @bucket, key])
     if File.regular?(path) do
-      {:ok, path}
+      {:ok, "/" <> path}
     else
       {:error, :not_found}
     end
   end
 
-  def put(key, file_path) do
-    filename = key <> Path.extname(file_path)
-    destination_abs = Path.join([dir(), filename])
-
-    File.mkdir_p!(dir())
-    File.cp!(file_path, destination_abs)
-    {:ok, "/" <> Path.join(["uploads", "codeshots", filename])}
+  def download(remote_path, local_path, _opts \\ []) do
+    remote = Path.join([@bucket, remote_path])
+    File.cp!(remote, local_path)
+    {:ok, local_path}
   end
 
-  defp dir() do
-    Path.join(Application.get_env(:elixir_stream, :storage_dir), "codeshots")
+  def upload(file_path, destination_path, _opts \\ []) do
+    destination = Path.join(["uploads", @bucket, destination_path])
+    File.mkdir_p!(Path.dirname(destination))
+    File.cp!(file_path, destination)
+    {:ok, %{
+      body: %{
+        bucket: @bucket,
+        key: destination_path,
+        location: Path.join(["uploads", @bucket, destination_path])
+      }
+    }}
   end
 end

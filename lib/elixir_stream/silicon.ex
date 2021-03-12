@@ -7,7 +7,6 @@ defmodule ElixirStream.Silicon do
   def generate(tip, opts) do
     theme = Keyword.get(opts, :theme, "Monokai Extended Bright")
     extension = Keyword.get(opts, :extension, "ex")
-    tmp_id = :crypto.hash(:md5, tip.code) |> Base.encode64 |> String.replace("/", "")
 
     @silicon_bin
     |> path_for()
@@ -15,7 +14,7 @@ defmodule ElixirStream.Silicon do
     |> System.cmd([tip.code, theme, extension])
     |> case do
       {filepath, 0} ->
-        ElixirStream.Storage.put(tip.id || "tmp-#{tmp_id}", String.trim(filepath))
+        {:ok, String.trim(filepath)}
       {output, _} ->
         Logger.error(output)
         {:error, "could not generate image"}
