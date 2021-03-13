@@ -3,7 +3,7 @@ defmodule ElixirStream.Catalog.Tip do
   alias ElixirStream.{Accounts, Catalog}
 
   @required_fields ~w[approved title description code]a
-  @optional_fields ~w[upvote_count published_at contributor_id]a
+  @optional_fields ~w[code_image_url upvote_count published_at contributor_id twitter_status_id]a
 
   schema "tips" do
     field :title, :string
@@ -12,14 +12,14 @@ defmodule ElixirStream.Catalog.Tip do
     field :code_image_url, :string
     field :searchable, ElixirStream.Ecto.TSVectorType
     field :approved, :boolean, default: false
+    field :upvote_count, :integer
 
     field :published_at, :utc_datetime_usec
+    field :twitter_status_id, :string
 
     belongs_to :contributor, Accounts.User
     has_many :upvotes, Catalog.Upvote
     # has_many :modules, Catalog.Modules
-
-    field :upvote_count, :integer
 
     timestamps()
   end

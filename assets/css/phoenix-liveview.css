@@ -50,8 +50,3 @@
   text-decoration: none;
   cursor: pointer;
 }
-
-.phx-submit-loading [type="submit"] svg.animate-spin,
-.phx-change-loading [type="button"] svg.animate-spin {
-  @apply inline;
-}

@@ -10,6 +10,7 @@
         <div class="flex-shrink-0 flex items-center">
           <%= live_redirect to: "/", class: "flex items-center justify-center h-16 w-16 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-500 md:w-20" do %>
             <%= img_tag Routes.static_path(@socket, "/images/logo.svg"), class: "block h-10 w-auto", alt: "Elixir Stream" %>
+            <span class="ml-2 leading-none text-brand-800" style="font-weight: 600; font-family: 'Fira Sans'">elixir stream</span>
           <% end %>
         </div>
       </div>
@@ -46,7 +47,7 @@
         </button>
       </div>
       <div class="hidden lg:flex lg:items-center lg:justify-end xl:col-span-4">
-        <%= if assigns[:current_user] do %>
+        <%= if @current_user.id do %>
           <!-- Profile dropdown -->
           <div class="flex-shrink-0 relative ml-5">
             <div>
@@ -115,7 +116,7 @@
 
       <a href="#" aria-current="false" class="hover:bg-gray-50 block rounded-md py-2 px-3 text-base font-medium text-gray-900">Trending</a>
     </div>
-    <%= if assigns[:current_user] do %>
+    <%= if @current_user.id do %>
       <div class="border-t border-gray-200 pt-4 pb-3">
         <div class="max-w-3xl mx-auto px-4 flex items-center sm:px-6">
           <div class="flex-shrink-0">

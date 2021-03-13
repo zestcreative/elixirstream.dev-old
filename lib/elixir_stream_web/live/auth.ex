@@ -8,12 +8,12 @@ defmodule ElixirStreamWeb.Live.Auth do
   @claims %{"typ" => "access"}
   @token_key "guardian_default_token"
 
-  def assign_defaults(socket) do
+  def assign_defaults(socket, session) do
     Phoenix.LiveView.assign(
       socket,
       searching: false,
       search_changeset: search_changeset(%{})
-    )
+    ) |> load_user(session)
   end
 
   @search_types %{module: :string, q: :string}
@@ -23,10 +23,9 @@ defmodule ElixirStreamWeb.Live.Auth do
     |> Changeset.validate_length(:q, max: 75)
   end
 
-  def require_user(socket, session, opts \\ []) do
-    socket = load_user(socket, session)
-    if socket.assigns.current_user do
-      {:ok, socket, opts}
+  def require_user(socket) do
+    if socket.assigns.current_user.id do
+      {:ok, socket}
     else
       {:ok,
         socket
@@ -34,7 +33,6 @@ defmodule ElixirStreamWeb.Live.Auth do
         |> redirect(to: "/")}
     end
   end
-  def require_user(_), do: {:error, :not_logged_in}
 
   def load_user(socket, %{@token_key => token}) do
     Phoenix.LiveView.assign_new(socket, :current_user, fn ->
@@ -42,9 +40,14 @@ defmodule ElixirStreamWeb.Live.Auth do
           {:ok, user} <- ElixirStream.Accounts.Guardian.resource_from_claims(claims) do
         user
       else
-        _ -> nil
+        _ -> %ElixirStream.Accounts.User{}
       end
     end)
   end
-  def load_user(socket, _), do: socket
+
+  def load_user(socket, _) do
+    Phoenix.LiveView.assign_new(socket, :current_user, fn ->
+      %ElixirStream.Accounts.User{}
+    end)
+  end
 end

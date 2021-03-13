@@ -18,6 +18,7 @@ defmodule ElixirStream.Repo.Migrations.AddTips do
       add :code_image_url, :string
       add :published_at, :utc_datetime
       add :approved, :boolean, null: false, default: false
+      add :twitter_status_id, :string
 
       add :contributor_id, references(:users, type: :binary_id, on_delete: :nilify_all), null: false
 

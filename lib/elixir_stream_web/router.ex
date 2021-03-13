@@ -7,7 +7,6 @@ defmodule ElixirStreamWeb.Router do
     plug :fetch_session
     plug :fetch_live_flash
     plug ElixirStreamWeb.GuardianPipeline
-    plug :current_user
     plug :put_root_layout, {ElixirStreamWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
@@ -54,15 +53,14 @@ defmodule ElixirStreamWeb.Router do
     live "/tips", TipLive, :index
     live "/tips/new", TipLive, :new
     live "/tips/:id", TipLive, :show
+    live "/tips/:id/edit", TipLive, :edit
   end
 
   scope "/admin", as: :admin do
     pipe_through [:browser, :require_admin]
-    live_dashboard "/dashboard", metrics: ElixirStreamWeb.Telemetry
-  end
-
-  def current_user(conn, _opts) do
-    Plug.Conn.assign(conn, :current_user, ElixirStream.Accounts.Guardian.Plug.current_resource(conn))
+    live_dashboard "/dashboard",
+      metrics: ElixirStreamWeb.Telemetry,
+      ecto_repos: [ElixirStream.Repo]
   end
 
   defp is_admin(conn, _opts) do

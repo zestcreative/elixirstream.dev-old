@@ -12,6 +12,16 @@ defmodule ElixirStream.Catalog.Query do
     |> where([q], q.id in ^ids)
   end
 
+  def where_mine_or_published(queryable \\ Tip, user_id) do
+    queryable
+    |> where([q], q.contributor_id == ^user_id or q.published_at < ^DateTime.utc_now())
+  end
+
+  def where_published(queryable \\ Tip) do
+    queryable
+    |> where([q], q.published_at < ^DateTime.utc_now())
+  end
+
   def return(queryable \\ Tip, fields) do
     select(queryable, ^fields)
   end
@@ -25,6 +35,10 @@ defmodule ElixirStream.Catalog.Query do
 
   def approved(queryable \\ Tip) do
     where(queryable, [q], q.approved == true)
+  end
+
+  def unapproved(queryable \\ Tip) do
+    where(queryable, [q], q.approved == false)
   end
 
   def order_by_latest(queryable \\ Tip) do

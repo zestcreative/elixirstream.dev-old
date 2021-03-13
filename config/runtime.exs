@@ -43,7 +43,12 @@ if config_env() == :prod do
   config :ueberauth, Ueberauth.Strategy.Twitter.OAuth,
     consumer_key: System.get_env("TWITTER_LOGIN_CONSUMER_KEY"),
     consumer_secret: System.get_env("TWITTER_LOGIN_CONSUMER_SECRET")
+
 end
 
 silicon_bin =
   System.find_executable("silicon") || raise "needs 'silicon' installed."
+
+config :elixir_stream, ElixirStream.Silicon,
+  fonts: ElixirStream.Silicon.fonts(),
+  themes: ElixirStream.Silicon.themes()

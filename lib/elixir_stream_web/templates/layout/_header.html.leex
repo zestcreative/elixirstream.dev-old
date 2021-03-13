@@ -17,6 +17,9 @@
   <%= live_title_tag assigns[:page_title] || "Home", suffix: " · ElixirStream" %>
   <link phx-track-static rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
   <script defer phx-track-static type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
+  <%= if Application.get_env(:elixir_stream, :app_env) == :prod do %>
+    <script async defer data-domain="elixirstream.dev" src="https://stats.elixirstream.dev/js/index.js"></script>
+  <% end %>
 
   <script>
     if (localStorage.theme === "dark" || (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)) {

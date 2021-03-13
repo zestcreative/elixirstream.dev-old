@@ -17,16 +17,20 @@ defmodule ElixirStream.MixProject do
   def application do
     [
       mod: {ElixirStream.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools] ++ extra_applications(Mix.env())
     ]
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
+  defp extra_applications(:test), do: []
+  defp extra_applications(_), do: [:os_mon]
+
   defp deps do
     [
-      {:ecto_sql, "~> 3.4"},
+      {:ecto_sql, "~> 3.4", override: true},
+      {:ecto_psql_extras, "~> 0.2"},
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.0"},
       {:finch, "~> 0.6"},
@@ -38,13 +42,14 @@ defmodule ElixirStream.MixProject do
       {:mime, "~> 1.2"},
       {:oauther, "~> 1.1"},
       {:oban, "~> 2.5.0"},
-      {:phoenix, "~> 1.5.7"},
+      {:phoenix, "~> 1.5"},
       {:phoenix_ecto, "~> 4.1"},
       {:phoenix_html, "~> 2.11"},
       {:phoenix_live_dashboard, "~> 0.4"},
       {:phoenix_live_view, "~> 0.15.0"},
       {:plug_cowboy, "~> 2.0"},
       {:postgrex, ">= 0.0.0"},
+      {:quarto, "~> 1.0.0"},
       {:sweet_xml, "~> 0.6"},
       {:telemetry_metrics, "~> 0.4"},
       {:telemetry_poller, "~> 0.4"},
@@ -53,7 +58,7 @@ defmodule ElixirStream.MixProject do
       {:ueberauth_twitter, "~> 0.3"},
       # Test/Dev
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
-      {:ex_machina, "~> 2.6.0", only: :test},
+      {:ex_machina, "~> 2.6", only: :test},
       {:floki, ">= 0.27.0", only: :test},
       {:phoenix_live_reload, "~> 1.2", only: :dev}
     ]

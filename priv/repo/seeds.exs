@@ -103,7 +103,7 @@ Repo.insert!(%Tip{
 
 Repo.insert!(%Tip{
   title: "Replace Args",
-  approved: true,
+  approved: false,
   description: """
   Did you know that you can selectively replace args when insreting a unique job? With `replace_args`, when an existing
   job matches some unique keys all other args are replaced.
