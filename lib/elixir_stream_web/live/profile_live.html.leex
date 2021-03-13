@@ -5,7 +5,7 @@
   <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
     <p>
       <%= gettext("To update your username, avatar, or name, ") %>
-      <%= link "edit your profile at GitHub", class: "link", target: "_blank", to: "https://github.com/#{@current_user.username}" %>
+      <%= link "edit your profile at GitHub", class: "border-b-2 border-gray-700 hover:text-gray-700", target: "_blank", to: "https://github.com/#{@current_user.username}" %>
       <%= gettext("and then sign out and sign back into") %> ElixirStream.dev
     </p>
     <div>

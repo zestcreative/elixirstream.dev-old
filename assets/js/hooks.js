@@ -1,5 +1,18 @@
 let hooks = {}
 
+hooks.PaginationScroll = {
+  mounted() {
+    this.handleEvent("scroll", ({ selector }) => {
+      const el = document.querySelector(selector)
+      if(el) {
+        el.scrollIntoView({ behavior: "smooth" })
+      } else {
+        console.warn(`scroll event did not find ${selector} to scroll to`)
+      }
+    })
+  }
+}
+
 hooks.PreviewImage = {
   mounted() {
     const container = this.el

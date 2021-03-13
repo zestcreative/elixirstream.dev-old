@@ -96,6 +96,32 @@ defmodule ElixirStreamWeb.TipLive do
     {:noreply, socket}
   end
 
+  def handle_event("next-page", _, socket) do
+    %{entries: tips, metadata: metadata} =
+      socket
+      |> tip_opts(socket.assigns.tip_sort ++ [after: socket.assigns.page_metadata.after])
+      |> Catalog.list_tips()
+
+    {:noreply,
+      socket
+      |> push_event(:scroll, %{selector: "#top-pagination-nav"})
+      |> assign(tips: tips)
+      |> assign(page_metadata: metadata)}
+  end
+
+  def handle_event("prev-page", _, socket) do
+    %{entries: tips, metadata: metadata} =
+      socket
+      |> tip_opts(socket.assigns.tip_sort ++ [before: socket.assigns.page_metadata.before])
+      |> Catalog.list_tips()
+
+    {:noreply,
+      socket
+      |> push_event(:scroll, %{selector: "#top-pagination-nav"})
+      |> assign(tips: tips)
+      |> assign(page_metadata: metadata)}
+  end
+
   def handle_event("upvote-tip", %{"tip-id" => tip_id}, socket) do
     Catalog.upvote_tip(tip_id, socket.assigns.current_user)
     {:noreply, socket}
@@ -189,9 +215,10 @@ defmodule ElixirStreamWeb.TipLive do
 
     case Changeset.apply_action(search_changeset, :insert) do
       {:ok, %{q: q}} ->
+        %{entries: tips, metadata: page_metadata} = Catalog.search_tips(q, tip_opts(socket))
         {:noreply,
           socket
-          |> assign(search_changeset: search_changeset, searching: true, tips: Catalog.search_tips(q, tip_opts(socket)))
+          |> assign(tip_sort: [by_latest: true], search_changeset: search_changeset, searching: true, tips: tips, page_metadata: page_metadata)
           |> load_my_upvotes()}
 
       {:error, search_changeset} ->
@@ -203,7 +230,7 @@ defmodule ElixirStreamWeb.TipLive do
     {:noreply, socket
     |> mount_new_tip()
     |> load_tips(params)
-    |> assign(search_changeset: search_changeset(%{}))}
+    |> assign(search_changeset: search_changeset(params))}
   end
 
   defp mount_new_tip(socket) do
@@ -218,21 +245,32 @@ defmodule ElixirStreamWeb.TipLive do
   end
 
   defp load_tips(socket, %{"sort" => "popular"}) do
+    sort = [by_upvotes: true]
+    %{entries: tips, metadata: metadata} =
+      socket |> tip_opts(sort) |> Catalog.list_tips()
     socket
-    |> assign(tips: Catalog.list_tips(:popular, tip_opts(socket)))
-    |> load_my_upvotes()
-  end
-  defp load_tips(socket, _) do
-    socket
-    |> assign(tips: Catalog.list_tips(:latest, tip_opts(socket)))
+    |> assign(tips: tips)
+    |> assign(tip_sort: sort)
+    |> assign(page_metadata: metadata)
     |> load_my_upvotes()
   end
 
-  defp tip_opts(socket) do
+  defp load_tips(socket, _) do
+    sort = [by_latest: true]
+    %{entries: tips, metadata: metadata} =
+      socket |> tip_opts(sort) |> Catalog.list_tips()
+    socket
+    |> assign(tips: tips)
+    |> assign(tip_sort: sort)
+    |> assign(page_metadata: metadata)
+    |> load_my_upvotes()
+  end
+
+  defp tip_opts(socket, opts \\ []) do
     if admin?(socket.assigns.current_user) do
-      [unpublished: true, unapproved: true]
+      Keyword.merge([paginate: true, unpublished: true, not_approved: true], opts)
     else
-      [unpublished: socket.assigns.current_user.id]
+      Keyword.merge([paginate: true, unpublished: socket.assigns.current_user.id], opts)
     end
   end
 

@@ -23,6 +23,21 @@ user = Repo.insert!(%User{
   twitter: "demouser",
 })
 
+for i <- 0..300 do
+  Repo.insert!(%Tip{
+    title: "Test Title #{i}",
+    approved: true,
+    description: "Test description foo bar baz que qux #{i}",
+    code: """
+    iex> IO.puts "WOWZERS"
+    #=> "WOWZERS"
+    """,
+    published_at: DateTime.utc_now() |> DateTime.add(-:rand.uniform(10000)),
+    contributor_id: user.id,
+    upvote_count: i
+  })
+end
+
 Repo.insert!(%Tip{
   title: "Pattern match on strings",
   approved: true,
@@ -34,10 +49,10 @@ Repo.insert!(%Tip{
   #=> "You can concat binaries!"
 
   iex> case "user:b4c52a55-e2d9-446f-908d-42c9812f2e8a" do
-         "admin:" <> id -> {:admin, id}
-         "user:" <> id -> {:user, id}
-         _ -> {:error, :invalid_format}
-       end
+        "admin:" <> id -> {:admin, id}
+        "user:" <> id -> {:user, id}
+        _ -> {:error, :invalid_format}
+      end
   {:user, "b4c52a55-e2d9-446f-908d-42c9812f2e8a"}
   """,
   published_at: DateTime.utc_now(),
@@ -91,9 +106,9 @@ Repo.insert!(%Tip{
 
   Percentage | Modules
   -----------|---------------------------
-     100.00% | CoverageTest
+    100.00% | CoverageTest
   -----------|---------------------------
-     100.00% | Total
+    100.00% | Total
 
   Generated HTML coverage results in "cover" directory
   """,
