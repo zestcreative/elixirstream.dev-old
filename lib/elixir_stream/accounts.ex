@@ -22,6 +22,7 @@ defmodule ElixirStream.Accounts do
   @spec find(String.t()) :: nil | %User{}
   @spec find(String.t(), String.t()) :: nil | %User{}
   def find(id), do: Repo.get(User, id)
+
   def find(source, source_id) do
     source
     |> Query.by_source_and_source_id(source_id)
@@ -52,15 +53,18 @@ defmodule ElixirStream.Accounts do
     |> Repo.update()
   end
 
-  @spec update_twitter(%User{}, String.t()) :: {:ok, %User{}} | {:error, Ecto.Changeset.t() | atom()}
+  @spec update_twitter(%User{}, String.t()) ::
+          {:ok, %User{}} | {:error, Ecto.Changeset.t() | atom()}
   def update_twitter(nil, _twitter), do: {:error, :not_found}
+
   def update_twitter(user, twitter) do
     user
     |> User.changeset(%{twitter: twitter})
     |> Repo.update()
   end
 
-  @spec update_editor_choice(%User{}, String.t()) :: {:ok, %User{}} | {:error, Ecto.Changeset.t() | atom()}
+  @spec update_editor_choice(%User{}, String.t()) ::
+          {:ok, %User{}} | {:error, Ecto.Changeset.t() | atom()}
   def update_editor_choice(user, choice) do
     user
     |> User.changeset(%{editor_choice: choice})

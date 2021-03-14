@@ -30,7 +30,6 @@ hooks.MonocoEditor = {
     this.editor.unmount()
   },
   mounted() {
-    console.log("Mounting")
     const where = this.el.dataset.mountSelector;
     const mountEl = this.el.querySelector(where)
     if (mountEl) {

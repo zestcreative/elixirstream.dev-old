@@ -22,6 +22,16 @@ defmodule ElixirStream.Application do
       # {ElixirStream.Worker, arg}
     ]
 
+    events = [[:oban, :job, :exception], [:oban, :circuit, :trip]]
+    :ok = Oban.Telemetry.attach_default_logger()
+
+    :telemetry.attach_many(
+      "oban-logger",
+      events,
+      &ElixirStream.Workers.ErrorHandler.handle_event/4,
+      []
+    )
+
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: ElixirStream.Supervisor]

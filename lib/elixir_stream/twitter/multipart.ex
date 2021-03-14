@@ -19,7 +19,6 @@ defmodule ElixirStream.Twitter.Multipart do
   ```
   """
 
-
   defmodule Part do
     @moduledoc false
 

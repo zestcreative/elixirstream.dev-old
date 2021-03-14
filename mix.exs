@@ -29,6 +29,7 @@ defmodule ElixirStream.MixProject do
 
   defp deps do
     [
+      {:bamboo, "~> 2.0"},
       {:ecto_sql, "~> 3.4", override: true},
       {:ecto_psql_extras, "~> 0.2"},
       {:ex_aws, "~> 2.1"},
@@ -50,6 +51,7 @@ defmodule ElixirStream.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:postgrex, ">= 0.0.0"},
       {:quarto, "~> 1.0.0"},
+      {:sentry, "~> 8.0"},
       {:sweet_xml, "~> 0.6"},
       {:telemetry_metrics, "~> 0.4"},
       {:telemetry_poller, "~> 0.4"},

@@ -37,14 +37,27 @@ defmodule ElixirStream.AccountsTest do
 
     test "when found, returns existing" do
       auth = Factory.build(:github_auth)
-      %{id: existing_id} = Factory.insert(:user, username: auth.info.nickname, source: auth.provider, source_id: to_string(auth.uid))
+
+      %{id: existing_id} =
+        Factory.insert(:user,
+          username: auth.info.nickname,
+          source: auth.provider,
+          source_id: to_string(auth.uid)
+        )
 
       assert {:ok, %{id: ^existing_id}} = Accounts.update_or_create(auth)
     end
 
     test "when found, updates existing" do
       auth = Factory.build(:github_auth)
-      %{id: existing_id} = Factory.insert(:user, name: "old name", username: "old username", source: auth.provider, source_id: to_string(auth.uid))
+
+      %{id: existing_id} =
+        Factory.insert(:user,
+          name: "old name",
+          username: "old username",
+          source: auth.provider,
+          source_id: to_string(auth.uid)
+        )
 
       assert {:ok, %{id: ^existing_id} = user} = Accounts.update_or_create(auth)
       refute user.username == "old username"

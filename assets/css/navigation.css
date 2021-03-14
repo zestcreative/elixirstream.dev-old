@@ -7,7 +7,11 @@
 }
 
 .menu-link {
-  @apply block rounded-md py-2 px-3 text-base font-medium text-gray-900 hover:bg-gray-100;
+  @apply hover:bg-gray-50 block rounded-md py-2 px-3 text-base font-medium text-gray-900;
+}
+
+.menu-link.active {
+  @apply bg-gray-100 text-gray-900;
 }
 
 /* html.dark .nav-link { */

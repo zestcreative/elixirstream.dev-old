@@ -7,6 +7,11 @@ defmodule ElixirStream.Catalog.Query do
     |> where([q], q.id == ^id)
   end
 
+  def where_contributor_id(queryable \\ Tip, id) do
+    queryable
+    |> where([q], q.contributor_id == ^id)
+  end
+
   def where_ids(queryable \\ Tip, ids) do
     queryable
     |> where([q], q.id in ^ids)
@@ -28,7 +33,10 @@ defmodule ElixirStream.Catalog.Query do
 
   def search(queryable \\ Tip, search_terms) do
     queryable
-    |> where([q], fragment("? @@ websearch_to_tsquery('english', ?)", q.searchable, ^search_terms))
+    |> where(
+      [q],
+      fragment("? @@ websearch_to_tsquery('english', ?)", q.searchable, ^search_terms)
+    )
     # Quarto doesn't support order by fragments :(
     # |> Ecto.Query.order_by([q], asc: fragment("ts_rank_cd(?, to_tsquery('english', ?), 32) AS rank", q.searchable, ^search_terms))
     |> Ecto.Query.order_by([q], desc: q.published_at)
@@ -45,6 +53,10 @@ defmodule ElixirStream.Catalog.Query do
 
   def order_by_latest(queryable \\ Tip) do
     order_by(queryable, [q], desc: q.published_at)
+  end
+
+  def order_by_unapproved(queryable \\ Tip) do
+    order_by(queryable, [q], asc: q.approved)
   end
 
   def order_by_upvotes(queryable \\ Tip) do

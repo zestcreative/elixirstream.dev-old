@@ -34,7 +34,6 @@ defmodule ElixirStreamWeb.Router do
     get "/browserconfig.xml", RobotController, :browserconfig
   end
 
-
   scope "/auth", ElixirStreamWeb do
     pipe_through [:browser]
     get "/:provider", AuthController, :request
@@ -58,13 +57,20 @@ defmodule ElixirStreamWeb.Router do
 
   scope "/admin", as: :admin do
     pipe_through [:browser, :require_admin]
+
     live_dashboard "/dashboard",
       metrics: ElixirStreamWeb.Telemetry,
       ecto_repos: [ElixirStream.Repo]
   end
 
+  if Mix.env() == :dev do
+    forward "/sent_emails", Bamboo.SentEmailViewerPlug
+  end
+
   defp is_admin(conn, _opts) do
-    if ElixirStream.Accounts.admin?(conn.assigns[:current_user]) do
+    user = Guardian.Plug.current_resource(conn)
+
+    if ElixirStream.Accounts.admin?(user) do
       conn
     else
       conn

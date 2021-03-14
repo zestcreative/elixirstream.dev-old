@@ -13,7 +13,8 @@ defmodule ElixirStreamWeb.Live.Auth do
       socket,
       searching: false,
       search_changeset: search_changeset(%{})
-    ) |> load_user(session)
+    )
+    |> load_user(session)
   end
 
   @search_types %{module: :string, q: :string}
@@ -28,16 +29,17 @@ defmodule ElixirStreamWeb.Live.Auth do
       {:ok, socket}
     else
       {:ok,
-        socket
-        |> put_flash(:error, gettext("Not logged in"))
-        |> redirect(to: "/")}
+       socket
+       |> put_flash(:error, gettext("Not logged in"))
+       |> redirect(to: "/")}
     end
   end
 
   def load_user(socket, %{@token_key => token}) do
     Phoenix.LiveView.assign_new(socket, :current_user, fn ->
-      with {:ok, claims} <- Guardian.decode_and_verify(ElixirStream.Accounts.Guardian, token, @claims),
-          {:ok, user} <- ElixirStream.Accounts.Guardian.resource_from_claims(claims) do
+      with {:ok, claims} <-
+             Guardian.decode_and_verify(ElixirStream.Accounts.Guardian, token, @claims),
+           {:ok, user} <- ElixirStream.Accounts.Guardian.resource_from_claims(claims) do
         user
       else
         _ -> %ElixirStream.Accounts.User{}

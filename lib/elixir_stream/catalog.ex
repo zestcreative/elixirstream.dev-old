@@ -3,6 +3,7 @@ defmodule ElixirStream.Catalog do
   alias ElixirStream.Accounts.{User}
   alias ElixirStream.{Silicon, Storage, Repo}
   alias Phoenix.PubSub
+  import ElixirStream.Accounts, only: [admin?: 1]
   require Ecto.Query
 
   @tip_topic "tips"
@@ -14,11 +15,6 @@ defmodule ElixirStream.Catalog do
     |> Repo.get(id)
   end
 
-  @spec search_tips(String.t()) :: list(%Tip{})
-  def search_tips(search_terms, opts \\ []) do
-    list_tips(opts, Query.search(Tip, search_terms))
-  end
-
   @default_list_opts [
     by_latest: false,
     by_upvotes: false,
@@ -26,7 +22,8 @@ defmodule ElixirStream.Catalog do
     order: false,
     not_approved: false,
     unpublished: false,
-    paginate: false
+    paginate: false,
+    stream: false
   ]
   @spec list_tips(Keyword.t(), Ecto.Queryable.t()) :: list(%Tip{}) | Quarto.Page.t()
   def list_tips(opts \\ [], queryable \\ Tip)
@@ -34,31 +31,58 @@ defmodule ElixirStream.Catalog do
   def list_tips(opts, queryable) do
     opts = Keyword.merge(@default_list_opts, opts)
     {paginate, opts} = Keyword.pop(opts, :paginate)
+    {stream, opts} = Keyword.pop(opts, :stream)
     {limit, opts} = Keyword.pop(opts, :limit)
 
-    queryable = opts |> Enum.reduce(queryable, &do_list_tips/2) |> Query.preload_contributor()
+    queryable = opts |> Enum.reduce(queryable, &do_list_tips/2)
     queryable = do_list_tips({:limit, limit}, queryable)
 
-    if paginate do
-      Repo.paginate(queryable, opts)
-    else
-      Repo.all(queryable)
+    cond do
+      stream ->
+        queryable
+        |> Repo.stream(opts)
+        |> Stream.chunk_every(opts[:max_rows] || limit)
+        |> Stream.flat_map(fn chunk -> tip_preloads(chunk) end)
+
+      paginate ->
+        queryable
+        |> Query.preload_contributor()
+        |> Repo.paginate(opts)
+
+      true ->
+        queryable
+        |> Query.preload_contributor()
+        |> Repo.all()
     end
   end
 
   defp do_list_tips({:not_approved, false}, queryable), do: Query.approved(queryable)
+  defp do_list_tips({:not_approved, true}, queryable), do: queryable
+
+  defp do_list_tips({:unpublished, id}, queryable) when is_binary(id),
+    do: Query.where_mine_or_published(queryable, id)
+
+  defp do_list_tips({:unpublished, true}, queryable), do: queryable
   defp do_list_tips({:unpublished, false}, queryable), do: Query.where_published(queryable)
   defp do_list_tips({_, false}, queryable), do: queryable
   defp do_list_tips({:by_latest, true}, queryable), do: Query.order_by_latest(queryable)
   defp do_list_tips({:by_upvotes, true}, queryable), do: Query.order_by_upvotes(queryable)
-  defp do_list_tips({:unpublished, id}, queryable) when is_binary(id),
-    do: Query.where_mine_or_published(queryable, id)
+  defp do_list_tips({:by_not_approved, true}, queryable), do: Query.order_by_unapproved(queryable)
+  defp do_list_tips({:search, q}, queryable), do: Query.search(queryable, q)
   defp do_list_tips({:limit, limit}, queryable), do: Ecto.Query.limit(queryable, ^limit)
   defp do_list_tips({:order, order}, queryable), do: Ecto.Query.order_by(queryable, ^order)
-  defp do_list_tips(opt, queryable), do: queryable
+  defp do_list_tips(_opt, queryable), do: queryable
 
-  defp tip_preloads(queryable) do
+  def tip_preloads(queryable) do
     Repo.preload(queryable, :contributor)
+  end
+
+  def delete_tip_for_user(tip_id, user) do
+    if admin?(user) do
+      Tip |> Query.where_id(tip_id) |> Repo.delete_all()
+    else
+      Tip |> Query.where_id(tip_id) |> Query.where_contributor_id(user.id) |> Repo.delete_all()
+    end
   end
 
   def downvote_tip(tip_id, user) when is_binary(tip_id) do

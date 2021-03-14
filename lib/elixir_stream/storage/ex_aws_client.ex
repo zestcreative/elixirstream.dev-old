@@ -9,6 +9,7 @@ defmodule ElixirStream.Storage.ExAwsClient do
     |> case do
       {:ok, response} ->
         {:ok, %{status_code: response.status, body: response.body, headers: response.headers}}
+
       {:error, reason} ->
         {:error, %{reason: reason}}
     end

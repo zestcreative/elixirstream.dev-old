@@ -10,7 +10,6 @@ config :elixir_stream, ElixirStream.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
-
 config :elixir_stream,
   storage_dir: Path.expand("uploads")
 
@@ -81,5 +80,7 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :elixir_stream, ElixirStream.Mailer, adapter: Bamboo.LocalAdapter
 
 if File.exists?("config/dev.secret.exs"), do: import_config("dev.secret.exs")

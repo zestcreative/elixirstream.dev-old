@@ -41,7 +41,7 @@ defmodule ElixirStream.Factory do
             "following" => 30,
             "followers_url" => "https://api.github.com/users/dbernheisel/followers",
             "public_gists" => 48,
-            "id" => 643968,
+            "id" => 643_968,
             "avatar_url" => "https://avatars.githubusercontent.com/u/643968?v=4",
             "events_url" => "https://api.github.com/users/dbernheisel/events{/privacy}",
             "starred_url" => "https://api.github.com/users/dbernheisel/starred{/owner}{/repo}",
@@ -49,7 +49,7 @@ defmodule ElixirStream.Factory do
             "blog" => "https://bernheisel.com",
             "subscriptions_url" => "https://api.github.com/users/dbernheisel/subscriptions",
             "type" => "User",
-            "disk_usage" => 564771,
+            "disk_usage" => 564_771,
             "site_admin" => false,
             "owned_private_repos" => 8,
             "public_repos" => 95,
@@ -71,7 +71,7 @@ defmodule ElixirStream.Factory do
               "collaborators" => 0,
               "name" => "free",
               "private_repos" => 10000,
-              "space" => 976562499
+              "space" => 976_562_499
             },
             "node_id" => "MDQ6VXNlcjY0Mzk2Nw==",
             "followers" => 51,
@@ -109,7 +109,8 @@ defmodule ElixirStream.Factory do
       },
       provider: :github,
       strategy: Ueberauth.Strategy.Github,
-      uid: 643968 # changed the uid
+      # changed the uid
+      uid: 643_968
     }
   end
 end

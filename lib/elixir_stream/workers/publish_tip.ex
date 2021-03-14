@@ -7,6 +7,7 @@ defmodule ElixirStream.Workers.PublishTip do
     case Catalog.find_tip(tip_id) do
       %{twitter_status_id: nil} = tip ->
         Twitter.publish(tip)
+
       _ ->
         :ok
     end

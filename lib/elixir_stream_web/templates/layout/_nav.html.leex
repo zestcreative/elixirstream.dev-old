@@ -1,9 +1,9 @@
 <%# _nav.html.leex template %>
 <!-- Top Nav -->
-<header x-data="{'profileOpen': false, 'mobileNav': false, 'currentRoute': ''}"
+<header x-data="{'profileOpen': false, 'mobileNav': false, 'currentRoute': '<%= current_alpine_route(@socket, @live_action) %>'}"
         x-bind:class="{'fixed inset-0 z-40 overflow-y-auto': mobileNav}"
         class="bg-white shadow-sm lg:static lg:overflow-y-visible"
-        x-on:navigate.window="currentRoute = $event.detail">
+        x-on:navigate.window="currentRoute = $event.detail; mobileNav = false">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="relative flex justify-between xl:grid xl:grid-cols-12 lg:gap-8">
       <div class="flex md:absolute md:left-0 md:inset-y-0 lg:static xl:col-span-2">
@@ -14,7 +14,7 @@
           <% end %>
         </div>
       </div>
-      <div class="min-w-0 flex-1 md:px-8 lg:px-0 xl:col-span-6">
+      <div class="min-w-0 flex-1 md:px-16 lg:px-0 xl:col-span-6">
         <div class="flex items-center px-6 py-4 md:max-w-3xl md:mx-auto lg:max-w-none lg:mx-0 xl:px-0">
           <div class="w-full">
             <label for="search" class="sr-only">Search</label>
@@ -108,13 +108,10 @@
   <!-- Mobile menu -->
   <nav x-cloak x-show="mobileNav" class="lg:hidden" aria-label="Global">
     <div class="max-w-3xl mx-auto px-2 pt-2 pb-3 space-y-1 sm:px-4">
-      <a href="#" aria-current="page" class="bg-gray-100 text-gray-900 block rounded-md py-2 px-3 text-base font-medium text-gray-900">Home</a>
-
-      <a href="#" aria-current="false" class="hover:bg-gray-50 block rounded-md py-2 px-3 text-base font-medium text-gray-900">Popular</a>
-
-      <a href="#" aria-current="false" class="hover:bg-gray-50 block rounded-md py-2 px-3 text-base font-medium text-gray-900">Communities</a>
-
-      <a href="#" aria-current="false" class="hover:bg-gray-50 block rounded-md py-2 px-3 text-base font-medium text-gray-900">Trending</a>
+      <%= active_link @socket, "tips-new", "New Tip", to: Routes.tip_path(@socket, :new), "x-on:click": "mobileNav = false", class: "menu-link" %>
+      <%= active_link @socket, "tips", "Tips", to: Routes.tip_path(@socket, :index, %{"sort" => "latest"}), "x-on:click": "mobileNav = false", class: "menu-link" %>
+      <%= active_link @socket, "tips", "Latest", to: Routes.tip_path(@socket, :index, %{"sort" => "latest"}), "x-on:click": "mobileNav = false", class: "menu-link ml-2" %>
+      <%= active_link @socket, "tips-popular", "Popular", to: Routes.tip_path(@socket, :index, %{"sort" => "popular"}), "x-on:click": "mobileNav = false", class: "menu-link ml-2" %>
     </div>
     <%= if @current_user.id do %>
       <div class="border-t border-gray-200 pt-4 pb-3">
@@ -130,6 +127,12 @@
         <div class="mt-3 max-w-3xl mx-auto px-2 space-y-1 sm:px-4">
           <%= live_redirect "Your Profile", to: Routes.profile_path(@socket, :edit), class: "block rounded-md py-2 px-3 text-base font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900", "x-on:click": "mobileNav = false" %>
           <%= link "Sign out", to: Routes.auth_path(@socket, :delete), class: "block rounded-md py-2 px-3 text-base font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900" %>
+
+          <%= if admin?(@current_user) do %>
+            <%= link "Dashboard",
+              to: Routes.live_dashboard_path(@socket, :home),
+              class: "block rounded-md py-2 px-3 text-base font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900" %>
+          <% end %>
         </div>
       </div>
     <% end %>

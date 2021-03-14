@@ -4,5 +4,6 @@
   <body class="antialiased" data-version="<%= Application.spec(:elixir_stream, :vsn) %>">
     <a class="skip-main" href="#main">Skip to main content</a>
     <%= @inner_content %>
+    <%= render "_footer.html", assigns %>
   </body>
 </html>

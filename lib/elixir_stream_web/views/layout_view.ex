@@ -15,10 +15,11 @@ defmodule ElixirStreamWeb.LayoutView do
   def active_link(%Phoenix.LiveView.Socket{} = socket, route, text, opts) do
     to = opts |> Keyword.fetch!(:to) |> String.split("?") |> hd()
     destination_info = Phoenix.Router.route_info(socket.router, "GET", to, socket.endpoint.host)
+
     liveview_opts = [
-            "@click": "$dispatch('navigate', '#{route}')",
-            ":class": "{'active': currentRoute === '#{route}', '': currentRoute !== '#{route}'}"
-          ]
+      "@click": "$dispatch('navigate', '#{route}')",
+      ":class": "{'active': currentRoute === '#{route}', '': currentRoute !== '#{route}'}"
+    ]
 
     with current_liveview <- socket.view,
          %{phoenix_live_view: {^current_liveview, _action}} <- destination_info do
@@ -26,6 +27,7 @@ defmodule ElixirStreamWeb.LayoutView do
     else
       %{phoenix_live_view: _} ->
         Phoenix.LiveView.Helpers.live_redirect(text, opts ++ liveview_opts)
+
       _ ->
         Phoenix.HTML.Link.link(text, opts)
     end
@@ -33,11 +35,14 @@ defmodule ElixirStreamWeb.LayoutView do
 
   def active_link(%Plug.Conn{} = conn, route, text, opts) do
     to = Keyword.fetch!(opts, :to)
-    destination_info = Phoenix.Router.route_info(conn.private[:phoenix_router], "GET", to, conn.host)
+
+    destination_info =
+      Phoenix.Router.route_info(conn.private[:phoenix_router], "GET", to, conn.host)
+
     liveview_opts = [
-            "@click": "$dispatch('navigate', '#{route}')",
-            ":class": "{'active': currentRoute === '#{route}', '': currentRoute !== '#{route}'}"
-          ]
+      "@click": "$dispatch('navigate', '#{route}')",
+      ":class": "{'active': currentRoute === '#{route}', '': currentRoute !== '#{route}'}"
+    ]
 
     with {current_liveview, _opts} <- conn.private[:phoenix_live_view],
          %{phoenix_live_view: {^current_liveview, _action}} <- destination_info do
@@ -45,15 +50,22 @@ defmodule ElixirStreamWeb.LayoutView do
     else
       %{phoenix_live_view: _} ->
         Phoenix.LiveView.Helpers.live_redirect(text, opts ++ liveview_opts)
+
       _ ->
         Phoenix.HTML.Link.link(text, opts)
     end
   end
 
-  def current_alpine_route(%Plug.Conn{} = conn) do
-    Enum.join(conn.path_info || ["/"], "-")
+  def current_alpine_route(%Phoenix.LiveView.Socket{} = socket, live_action) do
+    route =
+      socket.router.__routes__()
+      |> Enum.find(&({socket.view, live_action} == &1.metadata[:phoenix_live_view]))
+
+    "/" <> path_info = route.path
+    String.replace(path_info, "/", "-") |> IO.inspect(label: "CURRENT ALPINE ROUTE SOCKET")
   end
-  def current_alpine_route(%Phoenix.LiveView.Socket{} = _socket) do
-    nil
+
+  def current_alpine_route(%Plug.Conn{} = conn) do
+    Enum.join(conn.path_info || ["/"], "-") |> IO.inspect(label: "CURRENT ALPINE ROUTE CONN")
   end
 end

@@ -1,8 +1,9 @@
 <%# _header.html.l eex template %>
 <head>
   <meta charset="utf-8"/>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-  <meta name="description" content="Community of Elixir enthusiasts sharing tips, articles, and news. Made with ❤ with Elixir">
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <% seo = %ElixirStreamWeb.Seo.Generic{} %>
+  <meta name="description" content="<%= seo.description %>">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, shrink-to-fit=no"/>
   <meta name="msapplication-TileColor" content="#9428ec">
   <meta name="theme-color" content="#270642">
@@ -14,7 +15,7 @@
   <link rel="mask-icon" href="<%= Routes.static_path(@conn, "/images/safari-pinned-tab.svg") %>" color="#9428EC">
   <link rel="canonical" href="https://elixirstream.dev<%= Phoenix.Controller.current_path(@conn) %>" />
   <%= csrf_meta_tag() %>
-  <%= live_title_tag assigns[:page_title] || "Home", suffix: " · ElixirStream" %>
+  <%= live_title_tag assigns[:page_title] || "Home", suffix: " · Elixir Stream" %>
   <link phx-track-static rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
   <script defer phx-track-static type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   <%= if Application.get_env(:elixir_stream, :app_env) == :prod do %>

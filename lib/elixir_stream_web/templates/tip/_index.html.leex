@@ -1,0 +1,8 @@
+<%# _index.html.l eex template %>
+<ul phx-hook="PaginationScroll" id="tips-list" class="space-y-4">
+  <%= for tip <- @tips do %>
+    <li data-tip id="tip-<%= tip.id %>">
+      <%= render "_show.html", socket: @socket, tip: tip, current_user: @current_user, upvoted_tip_ids: @upvoted_tip_ids %>
+    </li>
+  <% end %>
+</ul>

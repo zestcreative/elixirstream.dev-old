@@ -4,6 +4,7 @@ defmodule ElixirStream.Storage.LocalImplementation do
 
   def url(key, _opts \\ []) do
     path = Path.join(["uploads", @bucket, key])
+
     if File.regular?(path) do
       {:ok, "/" <> path}
     else
@@ -21,12 +22,14 @@ defmodule ElixirStream.Storage.LocalImplementation do
     destination = Path.join(["uploads", @bucket, destination_path])
     File.mkdir_p!(Path.dirname(destination))
     File.cp!(file_path, destination)
-    {:ok, %{
-      body: %{
-        bucket: @bucket,
-        key: destination_path,
-        location: Path.join(["uploads", @bucket, destination_path])
-      }
-    }}
+
+    {:ok,
+     %{
+       body: %{
+         bucket: @bucket,
+         key: destination_path,
+         location: Path.join(["uploads", @bucket, destination_path])
+       }
+     }}
   end
 end

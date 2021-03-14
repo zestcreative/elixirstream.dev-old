@@ -8,5 +8,4 @@ defmodule ElixirStream.Accounts.Query do
     |> where([u], u.source == ^source)
     |> where([u], u.source_id == ^source_id)
   end
-
 end

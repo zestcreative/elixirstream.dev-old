@@ -1,4 +1,5 @@
 defmodule ElixirStreamWeb.Endpoint do
+  use Sentry.PlugCapture
   use Phoenix.Endpoint, otp_app: :elixir_stream
 
   # The session will be stored in the cookie and signed,
@@ -54,6 +55,7 @@ defmodule ElixirStreamWeb.Endpoint do
     pass: ["*/*"],
     json_decoder: Phoenix.json_library()
 
+  plug Sentry.PlugContext
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options

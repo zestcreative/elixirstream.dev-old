@@ -8,7 +8,10 @@ import Config
 
 if System.get_env("CI") do
   config :elixir_stream, ElixirStream.Repo,
-    url: "postgres://postgres:postgres@postgres:5432/elixir_stream_test#{System.get_env("MIX_TEST_PARTITION")}",
+    url:
+      "postgres://postgres:postgres@postgres:5432/elixir_stream_test#{
+        System.get_env("MIX_TEST_PARTITION")
+      }",
     pool: Ecto.Adapters.SQL.Sandbox
 else
   config :elixir_stream, ElixirStream.Repo,
@@ -19,6 +22,8 @@ else
     port: 54321,
     pool: Ecto.Adapters.SQL.Sandbox
 end
+
+config :elixir_stream, ElixirStream.Mailer, adapter: Bamboo.TestAdapter
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.

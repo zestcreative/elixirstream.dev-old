@@ -24,13 +24,14 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
+  config :elixir_stream, ElixirStream.Mailer, api_key: System.fetch_env!("SENDGRID_API_KEY")
+
   config :elixir_stream, ElixirStreamWeb.Endpoint,
     http: [port: System.fetch_env!("PORT"), compress: true],
     url: [scheme: "https", host: System.fetch_env!("HOST"), port: 443],
     secret_key_base: secret_key_base
 
-  config :elixir_stream, ElixirStream.Guardian,
-    secret_key: secret_key_base
+  config :elixir_stream, ElixirStream.Guardian, secret_key: secret_key_base
 
   config :ex_aws,
     access_key_id: [System.fetch_env!("S3_ACCESS_KEY_ID")],
@@ -44,10 +45,20 @@ if config_env() == :prod do
     consumer_key: System.get_env("TWITTER_LOGIN_CONSUMER_KEY"),
     consumer_secret: System.get_env("TWITTER_LOGIN_CONSUMER_SECRET")
 
+  if dsn = System.get_env("SENTRY_DSN") do
+    config :sentry,
+      dsn: dsn,
+      environment_name: Application.get_env(:elixir_stream, :app_env),
+      included_environments: [:prod],
+      enable_source_code_context: true,
+      root_source_code_path: File.cwd!(),
+      tags: %{
+        env: "production"
+      }
+  end
 end
 
-silicon_bin =
-  System.find_executable("silicon") || raise "needs 'silicon' installed."
+silicon_bin = System.find_executable("silicon") || raise "needs 'silicon' installed."
 
 config :elixir_stream, ElixirStream.Silicon,
   fonts: ElixirStream.Silicon.fonts(),

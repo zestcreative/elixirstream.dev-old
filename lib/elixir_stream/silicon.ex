@@ -6,6 +6,7 @@ defmodule ElixirStream.Silicon do
 
   def generate(tip, opts \\ [])
   def generate(%{code: nil}, _opts), do: {:ok, nil}
+
   def generate(tip, opts) do
     theme = Keyword.get(opts, :theme, @default_theme)
     font = Keyword.get(opts, :font, @default_font)
@@ -18,6 +19,7 @@ defmodule ElixirStream.Silicon do
     |> case do
       {filepath, 0} ->
         {:ok, String.trim(filepath)}
+
       {output, _} ->
         Logger.error(output)
         {:error, "could not generate image"}
@@ -41,7 +43,8 @@ defmodule ElixirStream.Silicon do
         fonts
         |> String.trim()
         |> String.split("\n")
-        |> Enum.reject(& String.match?(&1, ~r/warning:|error:/))
+        |> Enum.reject(&String.match?(&1, ~r/warning:|error:/))
+
       _ ->
         []
     end
@@ -54,6 +57,7 @@ defmodule ElixirStream.Silicon do
     |> case do
       {fonts, 0} ->
         fonts |> String.trim() |> String.split("\n")
+
       _ ->
         []
     end

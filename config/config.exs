@@ -13,8 +13,7 @@ config :elixir_stream,
   generators: [binary_id: true],
   app_env: Mix.env()
 
-config :elixir_stream, ElixirStream.Repo,
-  migration_timestamps: [type: :utc_datetime]
+config :elixir_stream, ElixirStream.Repo, migration_timestamps: [type: :utc_datetime]
 
 # Configures the endpoint
 config :elixir_stream, ElixirStreamWeb.Endpoint,
@@ -25,20 +24,34 @@ config :elixir_stream, ElixirStreamWeb.Endpoint,
   live_view: [signing_salt: "tail8oyy"]
 
 # Configures Elixir's Logger
+config :logger,
+  backends: [:console, Sentry.LoggerBackend]
+
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
+
+config :elixir_stream, ElixirStream.Mailer,
+  adapter: Bamboo.SendGridAdapter,
+  hackney_opts: [
+    recv_timeout: :timer.minutes(1),
+    connect_timeout: :timer.minutes(1)
+  ]
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
 config :elixir_stream, Oban,
   repo: ElixirStream.Repo,
-  plugins: [],
-  queues: [publish_tip: 1]
+  plugins: [
+    {Oban.Plugins.Cron,
+     crontab: [
+       {"0 */4 * * *", ElixirStream.Workers.ApprovalReminder, queue: :mailer}
+     ]}
+  ],
+  queues: [publish_tip: 1, mailer: 1]
 
-config :elixir_stream, ElixirStream.Storage,
-  bucket: "elixirstream.dev"
+config :elixir_stream, ElixirStream.Storage, bucket: "elixirstream.dev"
 
 config :elixir_stream, ElixirStream.Accounts.Guardian,
   issuer: "elixir_stream",
@@ -49,17 +62,18 @@ config :ex_aws,
   http_client: ElixirStream.Storage.ExAwsClient,
   region: "us-east-1"
 
-config :ex_aws, :s3,
-  host: "us-east-1.linodeobjects.com"
+config :ex_aws, :s3, host: "us-east-1.linodeobjects.com"
 
 config :ueberauth, Ueberauth,
   json_library: Jason,
   providers: [
-    github: {Ueberauth.Strategy.Github, [
-      allow_private_emails: true,
-      send_redirect_uri: true,
-      default_scope: "read:user"
-    ]},
+    github:
+      {Ueberauth.Strategy.Github,
+       [
+         allow_private_emails: true,
+         send_redirect_uri: true,
+         default_scope: "read:user"
+       ]},
     twitter: {Ueberauth.Strategy.Twitter, []}
   ]
 
