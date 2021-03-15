@@ -4,6 +4,7 @@
 .highlight {
   background-color: #ffffff;
   padding: 1rem;
+  overflow-x: auto;
 }
 
 .highlight .unselectable {
