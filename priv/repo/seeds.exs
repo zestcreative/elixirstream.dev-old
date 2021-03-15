@@ -389,7 +389,7 @@ Repo.insert!(%Tip{
     %{
       "at" => "2021-02-11T17:01:13.517233Z",
       "attempt" => 1,
-      "error" => "** (RuntimeError) Something went wrong!\n..."
+      "error" => "** (RuntimeError) Something went wrong!\\n..."
     }
   ]
 
@@ -398,7 +398,7 @@ Repo.insert!(%Tip{
   def perform(%Job{attempt: attempt, errors: errors}) when attempt > 1 do
     case errors do
       [%{"error" => error} | _] ->
-        IO.puts "This job failed with the error:\n\n" <> error
+        IO.puts "This job failed with the error:\\n\\n" <> error
       [] ->
         IO.puts "This job snoozed, it doesn't have any errors"
     end
