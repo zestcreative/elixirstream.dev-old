@@ -21,6 +21,7 @@ defmodule ElixirStream.Catalog do
     limit: false,
     order: false,
     not_approved: false,
+    only_not_approved: false,
     unpublished: false,
     paginate: false,
     stream: false
@@ -58,6 +59,7 @@ defmodule ElixirStream.Catalog do
 
   defp do_list_tips({:not_approved, false}, queryable), do: Query.approved(queryable)
   defp do_list_tips({:not_approved, true}, queryable), do: queryable
+  defp do_list_tips({:only_not_approved, true}, queryable), do: Query.not_approved(queryable)
 
   defp do_list_tips({:unpublished, id}, queryable) when is_binary(id),
     do: Query.where_mine_or_published(queryable, id)
