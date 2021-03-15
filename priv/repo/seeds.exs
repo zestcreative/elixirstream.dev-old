@@ -77,7 +77,7 @@ Repo.insert!(%Tip{
   :ok
 
   iex> Agent.get_and_update(agent, fn state -> {state, [1 | state]} end)
-  *DBG* <0.112.0> got call {get_and_update, #Fun<erl_eval.44.12345123} from <0.110.0>
+  *DBG* <0.112.0> got call {get_and_update, #Fun<erl_eval.44.12345123>} from <0.110.0>
   *DBG* <0.112.0> sent [] to <0.110.0>, new state [1]
   []
 
@@ -408,5 +408,231 @@ Repo.insert!(%Tip{
   """,
   twitter_status_id: "1359912269791035392",
   published_at: DateTime.new!(Date.new!(2021, 2, 11), Time.new!(12, 08, 0, 0)),
+  contributor_id: sorentwo.id
+  })
+
+Repo.insert!(%Tip{
+  title: "Oban - Discard",
+  approved: true,
+  description: """
+  Did you know you can discard a job to prevent it from retrying again? Return `{:discard, reason}` from a worker's `perform/1` and it will record the reason as an error while marking the job discarded
+  """,
+  code: """
+  # If the underlying record was deleted then the job can never complete, discard it right
+  # away rather than retrying later.
+  def perform(%Job{args: %{"id" => id}}) do
+    case Account.fetch(id) do
+      {:ok, account} ->
+        do_stuff(account)
+
+      :error ->
+        {:discard, "record could not be found"}
+    end
+  end
+
+  # Retry for most errors, but discard for something more severe
+  def perform(%Job{args: %{"id" => id}}) do
+    try do
+      Video.process(id)
+    rescue
+      CorruptError ->
+        {:discard, "video is corrupt, unable to process"}
+
+      exception ->
+        reraise exception, __STACKTRACE__
+    end
+  end
+  """,
+  twitter_status_id: "1349012436368683009",
+  published_at: DateTime.new!(Date.new!(2021, 1, 12), Time.new!(10, 16, 0, 0)),
+  contributor_id: sorentwo.id
+  })
+
+Repo.insert!(%Tip{
+  title: "Oban - Snooze",
+  approved: true,
+  description: """
+  Did you know you can snooze a job to reschedule it for some time in the future? Return a snooze tuple from `perform/1` to back off and run the job again, without any errors.
+  """,
+  code: """
+  # Sleep 1 minute when a check fails
+  def perform(%Job{args: args}) do
+    case check_status(args) do
+      {:ok, _} ->
+        do_the_work(args)
+
+      {:error, :not_ready} ->
+        {:snooze, 60}
+    end
+  end
+
+  # Sleep 10 seconds per attempt to backoff
+  def perform(%Job{args: args, attempt: attempt}) do
+    if service_ready(args) do
+      do_the_work(args)
+    else
+      {:snooze, attempt * 10}
+    end
+  end
+  """,
+  twitter_status_id: "1347304917766205440",
+  published_at: DateTime.new!(Date.new!(2021, 1, 7), Time.new!(17, 11, 0, 0)),
+  contributor_id: sorentwo.id
+})
+
+Repo.insert!(%Tip{
+  title: "Oban - Timeout",
+  approved: true,
+  description: """
+  Did you know you can limit how long a job may execute? A worker's `timeout/1` callback dynamically calculates set how many milliseconds a job executes before it is stopped.
+  """,
+  code: """
+  # Set a fixed timeout of 10 seconds
+  def timeout(_job), do: :timer.seconds(10)
+
+  # Allow 10 more seconds for each successive attempt
+  def timeout(%Job{attempt: attempt}), do: :timer.seconds(attempt * 10)
+
+  # Allow jobs for paying customers to run longer
+  def timeout(%Job{args: %{"customer_id" => customer_id}) do
+    if Customer.payming?(customer_id) do
+      :timer.minutes(1)
+    else
+      :timer.seconds(15)
+    end
+  end
+  """,
+  twitter_status_id: "1349737088300683269",
+  published_at: DateTime.new!(Date.new!(2021, 1, 14), Time.new!(10, 16, 0, 0)),
+  contributor_id: sorentwo.id
+})
+
+Repo.insert!(%Tip{
+  title: "Oban - Custom Backoff",
+  approved: true,
+  description: """
+  Did you know you can customize the backoff between job retries? Add a backoff/1 callback to your worker to calculate the seconds between retries based on any job attributes.
+
+  https://hexdocs.pm/oban/Oban.Worker.html#module-customizing-backoff
+  """,
+  code: """
+  # Use a linear backoff based on the attempt
+  def backoff(%Job{attempt: attempt}), do: attempt
+
+  # Clamp the backoff to compensate for a high max_attempts
+  def backoff(%Job{attempt: attempt}) do
+    :math.pow(2, min(attempt, 15))
+  end
+
+  # Use a fixed period for a particular tag, otherwise use the default
+  def backoff(%Job{attempt: attempt, tags: tags} = job) do
+    if "rush_job" in tags do
+      30
+    else
+      Worker.backoff(job)
+    end
+  end
+  """,
+  twitter_status_id: "1351564179749167105",
+  published_at: DateTime.new!(Date.new!(2021, 1, 19), Time.new!(11, 16, 0, 0)),
+  contributor_id: sorentwo.id
+})
+
+Repo.insert!(%Tip{
+  title: "Oban - Unsaved Errors",
+  approved: true,
+  description: """
+  Did you know that errors are temporarily recorded on a job after execution? Errors are put in the unsaved_error map, which is then available in the backoff callback or telemetry events.
+
+  https://hexdocs.pm/oban/Oban.Worker.html#module-contextual-backoff
+  """,
+  code: """
+  # Conditionally back off for different classes of error
+  def backoff(%Job{unsaved_error: unsaved_error}) do
+    case unsaved_error.reason do
+      # Five minutes for "408 Request Timeout"
+      %MyApp.ApiError{status: 408} ->
+        @five_minutes
+
+      # Twenty minutes for "429 Too Many Requests" error
+      %MyApp.ApiError{status: 429} ->
+        @twenty_minutes
+
+      _ ->
+        @one_minute
+    end
+  end
+  """,
+  twitter_status_id: "1352303659875446787",
+  published_at: DateTime.new!(Date.new!(2021, 1, 21), Time.new!(12, 14, 0, 0)),
+  contributor_id: sorentwo.id
+})
+
+Repo.insert!(%Tip{
+  title: "Oban - Assert Enqueued",
+  approved: true,
+  description: """
+  Did you know that you can make assertions about whether jobs are enqueued? The Testing module provides dynamic helpers that you can mix into tests.
+
+  https://hexdocs.pm/oban/Oban.Testing.html#module-using-in-tests
+  """,
+  code: """
+  # Include the helpers into a test module
+  use Oban.Testing, repo: MyApp.Repo
+
+  # Assert that a job was already enqueued by checking the worker and args
+  assert_enqueued worker: MyWorker, args: %{id: 1}
+
+  # Check only a queue and some tags instead
+  assert_enqueued queue: :default, tags: ["customer-1"]
+
+  # Provide a timeout to assert that a job _will_ be enqueued within 250ms
+  assert_enqueued [worker: MyWorker], 250
+
+  # Refute that a worker as enqueued
+  refute_enqueued worker: MyWorker
+
+  # Refute that a worker _will be_ enqueued within 100ms
+  refute_enqueued [worker: MyWorker], 100
+  """,
+  twitter_status_id: "1354180312322990081",
+  published_at: DateTime.new!(Date.new!(2021, 1, 26), Time.new!(16, 32, 0, 0)),
+  contributor_id: sorentwo.id
+})
+
+Repo.insert!(%Tip{
+  title: "Oban - Perform Job",
+  approved: true,
+  description: """
+  Did you know you can construct and execute a job for testing with a single command? Use perform_job/3 from the Testing module to verify a worker, validate options, and execute a job inline.
+
+  https://hexdocs.pm/oban/Oban.Testing.html#perform_job/3
+  """,
+  code: """
+  use Oban.Testing, repo: MyApp.Repo
+
+  alias MyApp.MyWorker
+
+  test "checking job execution" do
+    # Assert that it doesn't accept random arguments
+    assert {:error, _} = perform_job(MyWorker, %{"bad" => "arg"})
+
+    # Assert executing with string arguments
+    assert :ok = perform_job(MyWorker, %{"id" => 1})
+
+    # Assert executing with automatically stringified keys
+    assert :ok = perform_job(MyWorker, %{id: 1})
+  end
+
+  test "raising assertion errors for invalid options" do
+    # Fails assertion because priority is invalid
+    perform_job(MyWorker, %{}, priority: 9)
+
+    # Fails because the provided worker isn't a real worker module
+    perform_job(MyVerker, %{"id" => 1})
+  end
+  """,
+  twitter_status_id: "1354900088829710336",
+  published_at: DateTime.new!(Date.new!(2021, 1, 28), Time.new!(16, 12, 0, 0)),
   contributor_id: sorentwo.id
 })
