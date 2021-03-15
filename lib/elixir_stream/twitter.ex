@@ -29,7 +29,7 @@ defmodule ElixirStream.Twitter do
     |> fill_with_description(tip)
   end
 
-  def put_title(body, %{title: title}), do: [["\"", title, "\""] | body]
+  def put_title(body, %{title: title}), do: [title | body]
 
   def put_contributor(body, %{contributor: %{name: name, twitter: nil}}),
     do: [" by #{name}" | body]
@@ -40,7 +40,7 @@ defmodule ElixirStream.Twitter do
 
   @tweet_limit 280
   def fill_with_description(body, %{description: description}) do
-    description = "\n\n #{description}"
+    description = "\n\n#{description}"
     taken_chars = String.length(body)
     remaining_chars = @tweet_limit - taken_chars
 
