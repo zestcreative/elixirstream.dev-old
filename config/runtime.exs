@@ -58,8 +58,10 @@ if config_env() == :prod do
   end
 end
 
-silicon_bin = System.find_executable("silicon") || raise "needs 'silicon' installed."
+unless config_env() == :test do
+  System.find_executable("silicon") || raise "needs 'silicon' installed."
 
-config :elixir_stream, ElixirStream.Silicon,
-  fonts: ElixirStream.Silicon.fonts(),
-  themes: ElixirStream.Silicon.themes()
+  config :elixir_stream, ElixirStream.Silicon,
+    fonts: ElixirStream.Silicon.fonts(),
+    themes: ElixirStream.Silicon.themes()
+end

@@ -37,3 +37,5 @@ npm-debug.log
 /uploads
 
 config/*.secret.exs
+env.prod
+releases

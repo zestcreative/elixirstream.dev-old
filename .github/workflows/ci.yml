@@ -36,7 +36,6 @@ jobs:
         apk update
         apk upgrade
         apk add --no-cache make bash zlib openssl openssh git g++ wget curl ca-certificates rust
-        cargo install silicon
     - uses: actions/checkout@v1
     - uses: actions/cache@v1
       name: "Cache Mix"

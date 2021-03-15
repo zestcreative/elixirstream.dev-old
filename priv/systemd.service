@@ -1,0 +1,25 @@
+# As root:
+# copy this file to /etc/systemd/system/elixirstream-production.service
+# systemctl daemon-reload
+# systemctl start elixirstream-production.service
+
+[Unit]
+Description=ElixirStream-Prod
+After=network.target
+
+[Service]
+Type=simple
+User=elixirstream
+Group=elixirstream
+WorkingDirectory=/home/elixirstream/app/production/current
+ExecStart=/home/elixirstream/app/production/current/bin/elixirstream start
+ExecStop=/home/elixirstream/app/production/current/bin/elixirstream stop
+Restart=on-failure
+RestartSec=5
+EnvironmentFile=/home/elixirstream/app/env.prod
+SyslogIdentifier=elixirstream_prod
+RemainAfterExit=no
+
+[Install]
+WantedBy=multi-user.target
+

@@ -10,6 +10,7 @@ import Config
 config :elixir_stream,
   ecto_repos: [ElixirStream.Repo],
   storage: ElixirStream.Storage.LocalImplementation,
+  storage_dir: Path.expand("uploads"),
   generators: [binary_id: true],
   app_env: Mix.env()
 

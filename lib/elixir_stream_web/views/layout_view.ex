@@ -62,10 +62,10 @@ defmodule ElixirStreamWeb.LayoutView do
       |> Enum.find(&({socket.view, live_action} == &1.metadata[:phoenix_live_view]))
 
     "/" <> path_info = route.path
-    String.replace(path_info, "/", "-") |> IO.inspect(label: "CURRENT ALPINE ROUTE SOCKET")
+    String.replace(path_info, "/", "-")
   end
 
   def current_alpine_route(%Plug.Conn{} = conn) do
-    Enum.join(conn.path_info || ["/"], "-") |> IO.inspect(label: "CURRENT ALPINE ROUTE CONN")
+    Enum.join(conn.path_info || ["/"], "-")
   end
 end

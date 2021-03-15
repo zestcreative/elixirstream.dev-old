@@ -4,13 +4,22 @@ defmodule ElixirStream.MixProject do
   def project do
     [
       app: :elixir_stream,
-      version: "0.1.0",
+      version: File.read!("VERSION") |> String.trim(),
       elixir: "~> 1.9",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      releases: [
+        elixirstream: [
+          steps: [:assemble, :tar],
+          path: "releases/artifacts",
+          include_executables_for: [:unix],
+          include_erts: true,
+          applications: [runtime_tools: :permanent]
+        ]
+      ]
     ]
   end
 
@@ -68,9 +77,10 @@ defmodule ElixirStream.MixProject do
 
   defp aliases do
     [
-      setup: ["deps.get", "ecto.setup", "cmd npm install --prefix assets"],
-      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
+      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+      outdated: ["hex.outdated", "cmd npm --prefix assets outdated || true"],
+      setup: ["deps.get", "ecto.setup", "cmd npm install --prefix assets"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
     ]
   end

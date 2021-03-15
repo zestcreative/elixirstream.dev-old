@@ -16,6 +16,9 @@ config :elixir_stream, ElixirStreamWeb.Endpoint,
 # Do not print debug messages in production
 config :logger, level: :info
 
+config :elixir_stream,
+  storage: ElixirStream.Storage.S3Implementation
+
 config :ex_aws_s3,
   host: "elixirstream.dev-prod.us-east-1.linodeobjects.com"
 
