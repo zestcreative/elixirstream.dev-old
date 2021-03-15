@@ -19,8 +19,8 @@ config :logger, level: :info
 config :elixir_stream,
   storage: ElixirStream.Storage.S3Implementation
 
-config :ex_aws_s3,
-  host: "elixirstream.dev-prod.us-east-1.linodeobjects.com"
+config :elixir_stream, ElixirStream.Storage,
+  bucket: "elixirstream.dev-prod"
 
 # ## SSL Support
 #
