@@ -45,6 +45,8 @@ defmodule ElixirStreamWeb.Router do
 
     live "/", PageLive, :index
 
+    get "/about", PageController, :about
+
     get "/logout", AuthController, :delete
     delete "/logout", AuthController, :delete
     live "/profile", ProfileLive, :edit

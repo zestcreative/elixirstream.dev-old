@@ -19,8 +19,7 @@ config :logger, level: :info
 config :elixir_stream,
   storage: ElixirStream.Storage.S3Implementation
 
-config :elixir_stream, ElixirStream.Storage,
-  bucket: "elixirstream.dev-prod"
+config :elixir_stream, ElixirStream.Storage, bucket: "elixirstream.dev-prod"
 
 # ## SSL Support
 #
