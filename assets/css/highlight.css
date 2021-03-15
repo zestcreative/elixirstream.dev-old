@@ -2,9 +2,8 @@
   background-color: #ffffcc;
 }
 .highlight {
-  background-color: #ffffff;
+  @apply font-mono bg-white overflow-x-auto;
   padding: 1rem;
-  overflow-x: auto;
 }
 
 .highlight .unselectable {

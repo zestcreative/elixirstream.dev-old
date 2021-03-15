@@ -1,3 +1,5 @@
+const defaultTheme = require('tailwindcss/defaultTheme')
+
 module.exports = {
   purge: [
     '../lib/elixir_stream_web/live/**/*.ex',
@@ -7,9 +9,13 @@ module.exports = {
     '../lib/elixir_stream_web/views/**/*.ex',
     './js/**/*.js'
   ],
-  darkMode: false, // or 'media' or 'class'
+  darkMode: false,
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter var', 'Inter', ...defaultTheme.fontFamily.sans],
+        mono: ['Fira Code VF', 'Fira Code', ...defaultTheme.fontFamily.mono]
+      },
       colors: {
         brand: {
           DEFAULT: '#9428EC',
