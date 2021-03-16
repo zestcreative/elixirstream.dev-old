@@ -42,7 +42,7 @@ defmodule ElixirStream.Catalog do
       stream ->
         queryable
         |> Repo.stream(opts)
-        |> Stream.chunk_every(opts[:max_rows] || limit)
+        |> Stream.chunk_every(opts[:max_rows])
         |> Stream.flat_map(fn chunk -> tip_preloads(chunk) end)
 
       paginate ->

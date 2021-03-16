@@ -4,9 +4,10 @@ defmodule ElixirStream.Email do
 
   def approval_reminder(unapproved_tips) do
     endpoint = ElixirStreamWeb.Endpoint
+    to = Application.get_env(:elixir_stream, ElixirStream.Email)[:approvers]
 
     new_email()
-    |> to([{"David Bernheisel", "dbernheisel@gmail.com"}])
+    |> to(to)
     |> from("approval@elixirstream.dev")
     |> subject("New tips to approve")
     |> add_text_body_for_tips(unapproved_tips, endpoint)

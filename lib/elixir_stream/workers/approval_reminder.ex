@@ -1,6 +1,6 @@
 defmodule ElixirStream.Workers.ApprovalReminder do
   use Oban.Worker, queue: :mailer
-  alias ElixirStream.Catalog
+  alias ElixirStream.{Catalog, Email, Mailer}
 
   @impl Oban.Worker
   def perform(_) do
@@ -11,9 +11,7 @@ defmodule ElixirStream.Workers.ApprovalReminder do
         :ok
 
       tips ->
-        tips
-        |> ElixirStream.Email.approval_reminder()
-        |> ElixirStream.Mailer.deliver_now!()
+        tips |> Email.approval_reminder() |> Mailer.deliver_now!()
     end
   end
 end

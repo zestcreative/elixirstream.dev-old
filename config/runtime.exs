@@ -4,6 +4,9 @@
 # remember to add this file to your .gitignore.
 import Config
 
+config :elixir_stream, ElixirStream.Email,
+  approvers: System.get_env("APPROVER_EMAILS")
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||
