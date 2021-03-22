@@ -1,6 +1,6 @@
 <%# _index_pagination.html.l eex template %>
-<%= if @page_metadata.before || @page_metadata.after do %>
-  <nav id="top-pagination-nav" aria-label="Pagination" class="flex-1 flex justify-between sm:justify-end">
+<%= if @page_metadata do %>
+  <nav id="<%= @nav_id %>" aria-label="Pagination" class="px-2 flex-1 flex justify-between sm:justify-end">
     <button phx-click="prev-page" class="<%= if !@page_metadata.before, do: "invisible " %>relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md bg-white hover:bg-gray-50">
       <!-- Heroicon name: chevron-left -->
       <svg class="text-gray-400 h-5 w-5 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
