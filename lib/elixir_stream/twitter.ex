@@ -5,12 +5,16 @@ defmodule ElixirStream.Twitter do
   @endpoint ElixirStreamWeb.Endpoint
 
   def publish(tip) do
-    with {:ok, tip, file} <- Catalog.generate_codeshot(tip),
-         {:ok, media_id} <-
-           Client.upload_media(file, filename: url_safe(tip.title) <> Path.extname(file)),
-         {:ok, %{body: %{"id_str" => twitter_status_id}}} <-
-           Client.update_status(tweet_body(tip), [media_id]),
-         {:ok, tip} <- Catalog.add_twitter_status_id(tip, twitter_status_id) do
+    if config()[:publish] do
+      with {:ok, tip, file} <- Catalog.generate_codeshot(tip),
+          {:ok, media_id} <-
+            Client.upload_media(file, filename: url_safe(tip.title) <> Path.extname(file)),
+          {:ok, %{body: %{"id_str" => twitter_status_id}}} <-
+            Client.update_status(tweet_body(tip), [media_id]),
+          {:ok, tip} <- Catalog.add_twitter_status_id(tip, twitter_status_id) do
+        {:ok, tip}
+      end
+    else
       {:ok, tip}
     end
   end
@@ -56,4 +60,6 @@ defmodule ElixirStream.Twitter do
       body <> description
     end
   end
+
+  defp config, do: Application.get_env(:elixir_stream, __MODULE__)
 end
