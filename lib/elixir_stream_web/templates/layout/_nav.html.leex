@@ -120,9 +120,8 @@
         </div>
       <% end %>
       <%= active_link @socket, "tips-new", "New Tip", to: Routes.tip_path(@socket, :new), "x-on:click": "mobileNav = false", class: "menu-link" %>
-      <%= active_link @socket, "tips", "Tips", to: Routes.tip_path(@socket, :index, %{"sort" => "latest"}), "x-on:click": "mobileNav = false", class: "menu-link" %>
-      <%= active_link @socket, "tips", "Latest", to: Routes.tip_path(@socket, :index, %{"sort" => "latest"}), "x-on:click": "mobileNav = false", class: "menu-link ml-2" %>
-      <%= active_link @socket, "tips-popular", "Popular", to: Routes.tip_path(@socket, :index, %{"sort" => "popular"}), "x-on:click": "mobileNav = false", class: "menu-link ml-2" %>
+      <%= active_link @socket, "tips", "Latest Tips", to: Routes.tip_path(@socket, :index, %{"sort" => "latest"}), "x-on:click": "mobileNav = false", class: "menu-link" %>
+      <%= active_link @socket, "tips-popular", "Popular Tips", to: Routes.tip_path(@socket, :index, %{"sort" => "popular"}), "x-on:click": "mobileNav = false", class: "menu-link" %>
     </div>
     <%= if @current_user.id do %>
       <div class="border-t border-gray-200 pt-4 pb-3">
