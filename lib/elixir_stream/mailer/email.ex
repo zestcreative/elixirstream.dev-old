@@ -4,7 +4,7 @@ defmodule ElixirStream.Email do
 
   def approval_reminder(unapproved_tips) do
     endpoint = ElixirStreamWeb.Endpoint
-    to = Application.get_env(:elixir_stream, ElixirStream.Email)[:approvers]
+    to = String.split(Application.get_env(:elixir_stream, ElixirStream.Email)[:approvers], ",")
 
     new_email()
     |> to(to)
