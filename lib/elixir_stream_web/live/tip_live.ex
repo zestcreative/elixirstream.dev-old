@@ -266,6 +266,7 @@ defmodule ElixirStreamWeb.TipLive do
     {:noreply,
      socket
      |> mount_new_tip()
+     |> assign(tips: [])
      |> assign(page_metadata: %{before: nil, after: nil})
      |> assign(search_changeset: search_changeset(params))}
   end
