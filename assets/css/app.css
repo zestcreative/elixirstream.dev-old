@@ -7,6 +7,10 @@
 @import "./code-editor.css";
 @import "./highlight.css";
 
+[x-cloak] {
+  display: none !important;
+}
+
 a.skip-main {
   left: -999px;
   position: absolute;
