@@ -26,8 +26,8 @@
         <% end %>
       </div>
     </div>
-    <h2 id="@tip-title-<%= @tip.id %>" class="mt-4 text-base font-semibold text-gray-900">
-      <%= @tip.title %>
+    <h2 id="tip-title-<%= @tip.id %>" class="mt-4 text-base font-semibold text-gray-900">
+      <%= link @tip.title, to: Routes.tip_path(@socket, :show, @tip.id) %>
     </h2>
   </div>
   <div class="mt-2 text-sm text-gray-700 space-y-4">
