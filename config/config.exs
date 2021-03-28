@@ -14,6 +14,8 @@ config :elixir_stream,
   generators: [binary_id: true],
   app_env: Mix.env()
 
+config :gettext, :default_locale, "en"
+
 config :elixir_stream, ElixirStream.Repo, migration_timestamps: [type: :utc_datetime]
 
 # Configures the endpoint

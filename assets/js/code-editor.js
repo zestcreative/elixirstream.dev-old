@@ -26,6 +26,7 @@ export default {
     }
   },
   mount: function(el, preferences) {
+    // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.ieditoroptions.html
     const instance = monaco.editor.create(el, {
       language: "elixir",
       wordBasedSuggestions: false,
@@ -50,7 +51,10 @@ export default {
       minimap: { enabled: false }
     });
 
-    instance.getModel().updateOptions({ tabSize: 2 })
+    instance.getModel().updateOptions({
+      detectIndentation: false,
+      tabSize: 2
+    })
 
     if(preferences.vim) {
       const { vim: statusNode } = preferences

@@ -14,8 +14,8 @@ defmodule ElixirStream.Accounts do
           {:ok, %User{}} | {:error, Ecto.Changeset.t()}
   def update_or_create(%Ueberauth.Auth{} = auth) do
     case find(to_string(auth.provider), to_string(auth.uid)) do
-      nil -> create(auth)
-      user -> update(user, auth)
+      nil -> {:create, create(auth)}
+      user -> {:update, update(user, auth)}
     end
   end
 

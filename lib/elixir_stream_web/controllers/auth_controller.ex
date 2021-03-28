@@ -21,18 +21,24 @@ defmodule ElixirStreamWeb.AuthController do
   def callback(%{assigns: %{ueberauth_auth: %{provider: :github} = auth}} = conn, _params) do
     Logger.debug(auth)
 
-    case Accounts.update_or_create(auth) do
-      {:ok, user} ->
+    auth
+    |> Accounts.update_or_create()
+    |> case do
+      {:create, {:ok, user}} ->
         conn
-        |> put_flash(:info, "Welcome #{user.name}")
+        |> put_flash(:info, gettext("Welcome %{name}! Be sure to update your profile!", name: user.name))
         |> ElixirStream.Accounts.Guardian.Plug.sign_in(user)
-        |> redirect(to: "/")
 
-      {:error, reason} ->
+      {:update, {:ok, user}} ->
+        conn
+        |> put_flash(:info, gettext("Welcome back %{user.name}", name: user.name))
+        |> ElixirStream.Accounts.Guardian.Plug.sign_in(user)
+
+      {_, {:error, reason}} ->
         conn
         |> put_flash(:error, reason)
-        |> redirect(to: "/")
     end
+    |> redirect(to: "/")
   end
 
   def callback(%{assigns: %{ueberauth_auth: %{provider: :twitter} = auth}} = conn, _params) do
