@@ -6,11 +6,25 @@ defmodule ElixirStream.Twitter.Client do
 
   @base_uri URI.parse("https://api.twitter.com")
   @update_status_uri URI.merge(@base_uri, "/1.1/statuses/update.json")
+  @get_tweet_uri URI.merge(@base_uri, "/2/tweets/")
 
   @upload_uri URI.parse("https://upload.twitter.com")
   @upload_media_uri URI.merge(@upload_uri, "/1.1/media/upload.json")
 
   @chunk_size 1_000_000
+
+  def get_tweet(status_id) do
+    uri = %URI{
+      URI.merge(@get_tweet_uri, status_id)
+      | query: URI.encode_query(%{"tweet.fields" => "public_metrics"})
+    }
+
+    :get
+    |> Finch.build(uri)
+    |> authorize_request()
+    |> Finch.request(@client)
+    |> handle_response()
+  end
 
   def update_status(status, media_ids) do
     uri = %URI{

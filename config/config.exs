@@ -49,10 +49,11 @@ config :elixir_stream, Oban,
   plugins: [
     {Oban.Plugins.Cron,
      crontab: [
-       {"0 */4 * * *", ElixirStream.Workers.ApprovalReminder, queue: :mailer}
+       {"0 */4 * * *", ElixirStream.Workers.ApprovalReminder, queue: :mailer},
+       {"@daily", ElixirStream.Workers.UpdateTwitterLikeCounts, queue: :twitter}
      ]}
   ],
-  queues: [publish_tip: 1, mailer: 1]
+  queues: [twitter: 1, publish_tip: 1, mailer: 1]
 
 config :elixir_stream, ElixirStream.Storage, bucket: "elixirstream.dev"
 

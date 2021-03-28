@@ -4,11 +4,9 @@
 # remember to add this file to your .gitignore.
 import Config
 
-config :elixir_stream, ElixirStream.Email,
-  approvers: System.get_env("APPROVER_EMAILS")
+config :elixir_stream, ElixirStream.Email, approvers: System.get_env("APPROVER_EMAILS")
 
-config :elixir_stream, ElixirStream.Twitter,
-  publish: System.get_env("TWITTER_PUBLISH") || false
+config :elixir_stream, ElixirStream.Twitter, publish: System.get_env("TWITTER_PUBLISH") || false
 
 if config_env() == :prod do
   database_url =

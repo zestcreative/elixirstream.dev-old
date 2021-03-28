@@ -409,7 +409,7 @@ Repo.insert!(%Tip{
   twitter_status_id: "1359912269791035392",
   published_at: DateTime.new!(Date.new!(2021, 2, 11), Time.new!(12, 08, 0, 0)),
   contributor_id: sorentwo.id
-  })
+})
 
 Repo.insert!(%Tip{
   title: "Oban - Discard",
@@ -446,7 +446,7 @@ Repo.insert!(%Tip{
   twitter_status_id: "1349012436368683009",
   published_at: DateTime.new!(Date.new!(2021, 1, 12), Time.new!(10, 16, 0, 0)),
   contributor_id: sorentwo.id
-  })
+})
 
 Repo.insert!(%Tip{
   title: "Oban - Snooze",

@@ -23,8 +23,15 @@ defmodule ElixirStream.Catalog.Query do
   end
 
   def where_published(queryable \\ Tip) do
+    now = DateTime.utc_now()
+
     queryable
-    |> where([q], q.published_at < ^DateTime.utc_now())
+    |> where([q], q.published_at < ^now)
+  end
+
+  def where_published_at_gte(queryable \\ Tip, date) do
+    queryable
+    |> where([q], q.published_at >= ^date)
   end
 
   def return(queryable \\ Tip, fields) do
