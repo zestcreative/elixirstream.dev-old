@@ -57,9 +57,13 @@ defmodule ElixirStream.Catalog do
     end
   end
 
+  defp do_list_tips({:approved, true}, queryable), do: Query.approved(queryable)
   defp do_list_tips({:not_approved, false}, queryable), do: Query.approved(queryable)
   defp do_list_tips({:not_approved, true}, queryable), do: queryable
   defp do_list_tips({:only_not_approved, true}, queryable), do: Query.not_approved(queryable)
+
+  defp do_list_tips({:published_at_gte, %DateTime{} = date}, queryable),
+    do: Query.where_published_at_gte(queryable, date)
 
   defp do_list_tips({:unpublished, id}, queryable) when is_binary(id),
     do: Query.where_mine_or_published(queryable, id)

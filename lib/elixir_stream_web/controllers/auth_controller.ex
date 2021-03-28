@@ -26,7 +26,10 @@ defmodule ElixirStreamWeb.AuthController do
     |> case do
       {:create, {:ok, user}} ->
         conn
-        |> put_flash(:info, gettext("Welcome %{name}! Be sure to update your profile!", name: user.name))
+        |> put_flash(
+          :info,
+          gettext("Welcome %{name}! Be sure to update your profile!", name: user.name)
+        )
         |> ElixirStream.Accounts.Guardian.Plug.sign_in(user)
 
       {:update, {:ok, user}} ->

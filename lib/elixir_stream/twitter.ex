@@ -4,14 +4,24 @@ defmodule ElixirStream.Twitter do
   alias ElixirStreamWeb.Router.Helpers, as: Routes
   @endpoint ElixirStreamWeb.Endpoint
 
+  def get_status(%{twitter_status_id: nil}), do: {:error, :no_tweet}
+
+  def get_status(%{twitter_status_id: tweet_id}) do
+    case Client.get_tweet(tweet_id) do
+      {:ok, %{body: %{"data" => data}}} -> {:ok, data}
+      {:ok, %{body: %{"errors" => errors}}} -> {:error, errors}
+      {:error, _} = error -> error
+    end
+  end
+
   def publish(tip) do
     if config()[:publish] do
       with {:ok, tip, file} <- Catalog.generate_codeshot(tip),
-          {:ok, media_id} <-
-            Client.upload_media(file, filename: url_safe(tip.title) <> Path.extname(file)),
-          {:ok, %{body: %{"id_str" => twitter_status_id}}} <-
-            Client.update_status(tweet_body(tip), [media_id]),
-          {:ok, tip} <- Catalog.add_twitter_status_id(tip, twitter_status_id) do
+           {:ok, media_id} <-
+             Client.upload_media(file, filename: url_safe(tip.title) <> Path.extname(file)),
+           {:ok, %{body: %{"id_str" => twitter_status_id}}} <-
+             Client.update_status(tweet_body(tip), [media_id]),
+           {:ok, tip} <- Catalog.add_twitter_status_id(tip, twitter_status_id) do
         {:ok, tip}
       end
     else

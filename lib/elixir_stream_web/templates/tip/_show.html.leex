@@ -46,7 +46,7 @@
               <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                 <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
               </svg>
-              <span class="font-medium text-gray-900"><%= @tip.upvote_count %></span>
+              <span class="font-medium text-gray-900"><%= @tip.upvote_count + @tip.twitter_like_count %></span>
               <span class="sr-only">upvotes</span>
             </button>
           <% @current_user.id && @current_user.id != @tip.contributor_id && @tip.id in @upvoted_tip_ids -> %>
@@ -55,7 +55,7 @@
               <svg class="h-5 w-5 transform duration-300 hover:rotate-180" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                 <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
               </svg>
-              <span class="font-medium text-gray-900"><%= @tip.upvote_count %></span>
+              <span class="font-medium text-gray-900"><%= @tip.upvote_count + @tip.twitter_like_count %></span>
               <span class="sr-only">upvotes</span>
             </button>
           <% true -> %>
@@ -63,7 +63,7 @@
               <!-- Heroicon name: solid/thumb-up --> <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                 <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
               </svg>
-              <span class="font-medium text-gray-900"><%= @tip.upvote_count %></span>
+              <span class="font-medium text-gray-900"><%= @tip.upvote_count + @tip.twitter_like_count %></span>
               <span class="sr-only">upvotes</span>
             </div>
         <% end %>
