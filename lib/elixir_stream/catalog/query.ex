@@ -68,7 +68,7 @@ defmodule ElixirStream.Catalog.Query do
 
   def order_by_upvotes(queryable \\ Tip) do
     queryable
-    |> order_by([q], desc: q.upvote_count)
+    |> order_by([q], desc: q.total_upvote_count)
     |> order_by_latest()
   end
 

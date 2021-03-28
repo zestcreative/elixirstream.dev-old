@@ -14,6 +14,7 @@ defmodule ElixirStream.Catalog.Tip do
     field :approved, :boolean, default: false
     field :upvote_count, :integer
     field :twitter_like_count, :integer
+    field :total_upvote_count, :integer
 
     field :published_at, :utc_datetime_usec
     field :twitter_status_id, :string
