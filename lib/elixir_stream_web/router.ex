@@ -27,7 +27,6 @@ defmodule ElixirStreamWeb.Router do
   scope "/", ElixirStreamWeb, log: false do
     pipe_through [:robots]
 
-    get "/sitemap.xml", RobotController, :sitemap
     get "/robots.txt", RobotController, :robots
     get "/rss.xml", RobotController, :rss
     get "/site.webmanifest", RobotController, :site_webmanifest
