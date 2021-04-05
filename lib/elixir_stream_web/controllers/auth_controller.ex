@@ -34,7 +34,7 @@ defmodule ElixirStreamWeb.AuthController do
 
       {:update, {:ok, user}} ->
         conn
-        |> put_flash(:info, gettext("Welcome back %{user.name}", name: user.name))
+        |> put_flash(:info, gettext("Welcome back %{name}", name: user.name))
         |> ElixirStream.Accounts.Guardian.Plug.sign_in(user)
 
       {_, {:error, reason}} ->

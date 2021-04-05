@@ -54,7 +54,7 @@ hooks.MonocoEditor = {
           editor.setOnChange({
             callback: (_event) => {
               let payload = editor.instance.getValue()
-              replaceEl.value = payload
+              replaceEl.value = payload.replace(/\r\n/g, "\n")
               this.pushEvent("code-updated", payload)
             },
             debounceMs: 1000
