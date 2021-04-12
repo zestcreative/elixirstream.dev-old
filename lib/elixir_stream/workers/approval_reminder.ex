@@ -4,7 +4,7 @@ defmodule ElixirStream.Workers.ApprovalReminder do
 
   @impl Oban.Worker
   def perform(_) do
-    [only_not_approved: true]
+    [only_not_approved: true, not_approved: true]
     |> Catalog.list_tips()
     |> case do
       [] ->
