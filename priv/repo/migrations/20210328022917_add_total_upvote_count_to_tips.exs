@@ -10,6 +10,5 @@ defmodule ElixirStream.Repo.Migrations.AddTotalUpvoteCountToTips do
             """
             ALTER TABLE tips DROP COLUMN total_upvote_count
             """
-
   end
 end

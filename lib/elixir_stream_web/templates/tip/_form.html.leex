@@ -50,6 +50,15 @@
           <%= textarea f, :description, class: "shadow-sm focus:ring-brand-500 focus:border-brand-500 block w-full sm:text-sm border-gray-300 rounded-md" %>
           <%= error_tag f, :description %>
         </div>
+        <div class="relative pt-1">
+          <% {track_color, bar_color} = color_for_bar(@character_count, max_characters()) %>
+          <div class="overflow-hidden h-4 mb-4 text-xs flex rounded <%= track_color %>">
+            <div style="width: <%= @character_percent %>%" class="shadow-none flex flex-col whitespace-nowrap text-white justify-center <%= bar_color %>">
+
+              <span class="text-xs pl-1"><%= @character_count %> / <%= max_characters() %></span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="mt-1">

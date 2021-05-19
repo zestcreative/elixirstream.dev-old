@@ -19,22 +19,49 @@ defmodule ElixirStreamWeb.TipLive do
   """
 
   embedded_schema do
-    field :title, :string
-    field :description, :string
+    field :title, :string, default: ""
+    field :description, :string, default: ""
     field :code, :string, default: @placeholder
     field :code_image_url, :string
     field :published_at, :string
     field :contributor, :any, virtual: true
+    field :total_characters, :integer, default: 0, virtual: true
   end
 
   @limit 1024 * 5
+  @character_limit 280
+  @minimum_characters 20
+  def character_limit, do: @character_limit
+
   def changeset(tip \\ %__MODULE__{}, attrs) do
     tip
     |> Changeset.cast(attrs, ~w[title description code published_at]a)
     |> Changeset.validate_required(~w[title description published_at]a)
     |> Changeset.validate_length(:code, max: @limit)
-    |> Changeset.validate_length(:description, min: 20, max: 200)
-    |> Changeset.validate_length(:title, max: 50)
+    |> validate_total_length()
+  end
+
+  defp assign_computed(socket) do
+    changeset = socket.assigns.changeset
+    total_count = Changeset.get_field(changeset, :total_characters)
+
+    socket
+    |> assign(:character_count, total_count)
+    |> assign(:character_percent, total_count / @character_limit * 100)
+  end
+
+  defp validate_total_length(changeset) do
+    description = Changeset.get_field(changeset, :description)
+    title = Changeset.get_field(changeset, :title)
+    description_count = String.length(description)
+    title_count = String.length(title)
+
+    changeset
+    |> Changeset.put_change(:total_characters, description_count + title_count)
+    |> Changeset.validate_number(:total_characters,
+      greater_than: @minimum_characters,
+      less_than: @character_limit
+    )
   end
 
   @impl true
@@ -51,7 +78,12 @@ defmodule ElixirStreamWeb.TipLive do
 
   @impl true
   def handle_event("validate", %{"tip_live" => params}, socket) do
-    {:noreply, assign(socket, changeset: changeset(socket.assigns.tip_form, params))}
+    changeset = changeset(socket.assigns.tip_form, params)
+
+    {:noreply,
+     socket
+     |> assign(changeset: Map.put(changeset, :action, :insert))
+     |> assign_computed()}
   end
 
   def handle_event("create", %{"tip_live" => params}, socket) do
@@ -235,7 +267,8 @@ defmodule ElixirStreamWeb.TipLive do
          |> assign(:tip, tip)
          |> assign(:tip_form, tip_form)
          |> assign(:page_title, tip.title)
-         |> assign(:changeset, changeset(tip_form, %{}))}
+         |> assign(:changeset, changeset(tip_form, %{}))
+         |> assign_computed()}
     end
   end
 
@@ -284,10 +317,11 @@ defmodule ElixirStreamWeb.TipLive do
     placeholder_code = Changeset.get_field(changeset, :code)
 
     socket
-    |> assign(:tip_form, tip)
-    |> assign(:preview_image_url, nil)
+    |> assign(tip_form: tip)
+    |> assign(preview_image_url: nil)
     |> assign(page_title: "New tip")
-    |> assign(:changeset, changeset)
+    |> assign(changeset: changeset)
+    |> assign_computed()
     |> push_event(:set_code, %{code: placeholder_code})
   end
 
